@@ -3,404 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AK BANNER NEST | Ultimate RIP Suite</title>
+    <title>AK BANNER NEST | Professional RIP Suite</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* Pure Aristocratic Black Theme */
+        /* Professional Dark Theme */
         :root {
-            --bg-dark: #000000; --bg-panel: #0a0a0a; --bg-header: #050505;
+            --bg-dark: #1a1a1a; --bg-panel: #242424; --bg-header: #0f0f0f;
             --accent: #2563eb; --accent-hover: #1d4ed8; --accent-gold: #d4af37;
-            --text-main: #e4e4e7; --text-light: #ffffff; --border: #1f1f22;
+            --text-main: #e4e4e7; --text-light: #ffffff; --border: #3a3a3a;
             --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
         /* Top Bar */
-        .top-bar { background-color: var(--bg-header); min-height: 55px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--border); }
-        .brand { color: var(--text-light); font-weight: 800; font-size: 20px; letter-spacing: 2px; display: flex; align-items: center; gap: 12px; }
+        .top-bar { background-color: var(--bg-header); min-height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .brand { color: var(--text-light); font-weight: 900; font-size: 24px; letter-spacing: 2px; display: flex; align-items: center; gap: 12px; }
         .brand span { color: var(--accent-gold); }
-        .server-status { font-size: 12px; font-weight: 700; background: rgba(16, 185, 129, 0.05); padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; display: flex; align-items: center; gap: 8px; }
-        .server-status.offline { background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
-        
-        .top-actions { display: flex; gap: 10px; align-items: center; }
-        .btn-icon { background: transparent; border: 1px solid var(--border); color: var(--text-light); width: 40px; height: 40px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; font-size: 16px; }
+        .brand i { font-size: 28px; }
+
+        .server-status { font-size: 11px; font-weight: 700; background: rgba(16, 185, 129, 0.1); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; display: flex; align-items: center; gap: 8px; }
+        .server-status.offline { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
+
+        .top-actions { display: flex; gap: 15px; align-items: center; }
+        .btn-icon { background: transparent; border: 1px solid var(--border); color: var(--text-light); width: 45px; height: 45px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; font-size: 18px; }
         .btn-icon:hover { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(212, 175, 55, 0.1); }
 
-        /* Workspace */
-        .workspace { display: flex; flex: 1; overflow: hidden; gap: 0; }
+        /* Main Container */
+        .main-container { display: flex; flex: 1; overflow: hidden; gap: 0; }
 
-        /* Sidebar */
-        .sidebar { width: 340px; background-color: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
-        .panel-section { padding: 25px; border-bottom: 1px solid var(--border); }
-        .panel-title { font-size: 12px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 18px; font-weight: 800; letter-spacing: 1.5px; display: flex; align-items: center; gap: 8px; }
-        
-        /* Folders List */
-        .folder-list { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; }
-        .folder-item { padding: 12px 15px; background: #111111; border-radius: 8px; cursor: pointer; font-size: 13px; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; transition: 0.2s; }
-        .folder-item:hover { border-color: #333333; }
-        .folder-item.active { background: rgba(212, 175, 55, 0.1); border-color: var(--accent-gold); color: var(--accent-gold); }
-        .folder-item.active span:last-child { background: var(--accent-gold); color: #000; }
-        
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 12px; margin-bottom: 8px; color: #a1a1aa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-group select, .form-group input { width: 100%; background: #000000; color: var(--text-light); border: 1px solid var(--border); padding: 12px; border-radius: 8px; outline: none; font-size: 13px; transition: 0.2s; }
-        .form-group select:focus, .form-group input:focus { border-color: var(--accent-gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.1); }
-        
-        .btn-primary { width: 100%; background: linear-gradient(45deg, var(--accent-gold), #b8860b); color: #000000; border: none; padding: 16px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); }
-        .btn-secondary { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-light); padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; margin-top: 10px; }
-        .btn-secondary:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        /* Left Sidebar - Assets Panel */
+        .assets-panel { width: 280px; background-color: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+        .panel-header { padding: 20px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.3); }
+        .panel-title { font-size: 13px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 15px; font-weight: 900; letter-spacing: 1.5px; display: flex; align-items: center; gap: 8px; }
 
-        /* Main Area */
-        .main-area { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-dark); overflow: hidden; }
-        .area-header { padding: 20px 35px; border-bottom: 1px solid var(--border); background: var(--bg-panel); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
-        .area-header h2 { font-size: 18px; font-weight: 700; color: var(--text-light); }
-        
-        .header-controls { display: flex; gap: 15px; align-items: center; }
-        .search-box { position: relative; width: 280px; max-width: 100%; }
-        .search-box input { width: 100%; background: #000000; border: 1px solid var(--border); padding: 10px 15px 10px 40px; border-radius: 8px; color: white; font-size: 13px; outline: none; transition: 0.2s; }
-        .search-box input:focus { border-color: var(--accent-gold); }
-        .search-box i { position: absolute; left: 15px; top: 12px; color: #71717a; font-size: 14px; }
+        .folder-list { display: flex; flex-direction: column; gap: 8px; padding: 0 15px; margin-top: 10px; }
+        .folder-item { padding: 12px 15px; background: #1a1a1a; border-radius: 8px; cursor: pointer; font-size: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; transition: 0.2s; }
+        .folder-item:hover { border-color: var(--border); background: #2a2a2a; }
+        .folder-item.active { background: rgba(212, 175, 55, 0.15); border-color: var(--accent-gold); color: var(--accent-gold); }
 
-        .file-grid { flex: 1; padding: 35px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; align-content: flex-start; }
-        .file-card { background: #0a0a0a; border: 1px solid var(--border); border-radius: 12px; padding: 20px; cursor: pointer; transition: 0.3s; position: relative; user-select: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .file-card:hover { border-color: #333333; transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
-        .file-card.selected { border-color: var(--accent-gold); background: rgba(212, 175, 55, 0.05); }
-        
-        .file-checkbox { position: absolute; top: 20px; left: 20px; accent-color: var(--accent-gold); transform: scale(1.5); cursor: pointer; z-index: 5; }
-        .file-icon { text-align: center; font-size: 55px; color: #1f1f22; margin: 20px 0; transition: 0.3s; }
-        .file-card.selected .file-icon { color: rgba(212, 175, 55, 0.5); }
-        .file-name { font-size: 15px; color: var(--text-light); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 12px; font-weight: 700; }
-        
-        .card-controls { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; background: #000000; padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
-        .size-badge { color: var(--accent-gold); font-size: 13px; font-weight: 800; text-align: center; background: rgba(212, 175, 55, 0.1); padding: 6px; border-radius: 6px; }
-        .qty-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-        .qty-row label { font-size: 11px; font-weight: 800; color: #71717a; }
-        .qty-input { width: 60px !important; padding: 6px !important; text-align: center; font-weight: 800; background: #111111 !important; border-color: #333 !important; }
-        .btn-edit-dim { width: 100%; background: transparent; border: 1px solid #333; color: #a1a1aa; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-edit-dim:hover { background: #111; color: white; border-color: #555; }
+        .assets-content { flex: 1; overflow-y: auto; padding: 15px; }
+        .asset-item { padding: 12px; background: #2a2a2a; border-radius: 8px; cursor: pointer; border: 1px solid transparent; margin-bottom: 10px; transition: 0.2s; display: flex; gap: 10px; }
+        .asset-item:hover { border-color: var(--accent-gold); }
+        .asset-item.selected { border-color: var(--accent-gold); background: rgba(212, 175, 55, 0.1); }
+        .asset-thumb { width: 60px; height: 60px; background: #1a1a1a; border-radius: 6px; overflow: hidden; }
+        .asset-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .asset-info { flex: 1; font-size: 11px; }
+        .asset-name { font-weight: 700; color: var(--text-light); }
+        .asset-size { color: #a1a1aa; margin-top: 2px; }
 
-        /* Stats Bar */
-        .stats-bar { padding: 15px 35px; background: rgba(212, 175, 55, 0.05); border-top: 1px solid var(--border); display: flex; gap: 40px; flex-wrap: wrap; }
-        .stat-item { display: flex; flex-direction: column; }
-        .stat-label { font-size: 11px; color: #a1a1aa; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
-        .stat-value { font-size: 18px; color: var(--accent-gold); font-weight: 800; margin-top: 5px; }
+        /* Center Canvas Area */
+        .canvas-area { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-dark); }
+        .canvas-toolbar { background: var(--bg-panel); padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
 
-        /* Full Screen RIP Workspace */
-        .fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #050505; z-index: 9999; display: none; flex-direction: column; }
-        .fs-toolbar { min-height: 75px; background: #0a0a0a; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 10px 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 20px; }
-        .fs-title { color: var(--accent-gold); font-weight: 900; font-size: 20px; display: flex; align-items: center; gap: 15px; letter-spacing: 1px; text-transform: uppercase; }
-        .fs-stats { display: flex; gap: 20px; font-size: 14px; background: #000; padding: 12px 20px; border-radius: 10px; border: 1px solid #222; align-items: center; flex-wrap: wrap; }
-        .fs-stats div { border-right: 1px solid #222; padding-right: 20px; color: #a1a1aa; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
-        .fs-stats div:last-child { border: none; padding-right: 0; }
-        .fs-stats span { display: block; color: var(--text-light); font-weight: 800; font-size: 16px; margin-top: 4px; }
-        .fs-stats span.highlight { color: #10b981; }
-        
-        .export-group { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
-        .export-select { background: #000; color: white; border: 1px solid #333; padding: 12px; border-radius: 8px; outline: none; font-size: 13px; font-weight: 600; }
-        .btn-export { background: #10b981; color: #000; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; display: flex; align-items: center; gap: 8px; font-size: 13px; transition: 0.2s; }
-        .btn-export:hover { background: #059669; transform: translateY(-2px); }
-        .btn-close { background: #ef4444; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 13px; text-transform: uppercase; transition: 0.2s; }
-        .btn-close:hover { background: #dc2626; }
+        .tool-group { display: flex; align-items: center; gap: 10px; }
+        .tool-group label { font-size: 11px; color: #a1a1aa; text-transform: uppercase; font-weight: 700; }
+        .tool-group input, .tool-group select { background: #1a1a1a; color: var(--text-light); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 12px; }
+        .tool-group input:focus, .tool-group select:focus { border-color: var(--accent-gold); outline: none; }
 
-        .canvas-wrapper { flex: 1; overflow: auto; padding: 40px; display: flex; justify-content: center; align-items: flex-start; background: #0f0f11; }
-        #nestCanvas { background: #ffffff; box-shadow: 0 30px 60px rgba(0,0,0,0.9); max-width: 100%; height: auto; }
+        .tool-btn { background: transparent; border: 1px solid var(--border); color: var(--text-light); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: 0.2s; }
+        .tool-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .tool-btn.active { background: var(--accent-gold); color: #000; border-color: var(--accent-gold); }
 
-        /* Dimensions Edit Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-content { background: #0a0a0a; border: 1px solid var(--border); width: 90%; max-width: 360px; padding: 35px; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.8); animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .modal-content h3 { color: var(--accent-gold); font-size: 18px; margin-bottom: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        .modal-actions { display: flex; gap: 15px; margin-top: 30px; }
-        .modal-actions button { flex: 1; padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 800; font-size: 14px; text-transform: uppercase; transition: 0.2s; }
-        .btn-cancel { background: #222; color: white; }
-        .btn-cancel:hover { background: #333; }
+        /* Nesting Canvas */
+        .nesting-canvas-wrapper { flex: 1; overflow: auto; padding: 20px; display: flex; justify-content: center; align-items: flex-start; background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%); }
+        #nestingCanvas { background: #ffffff; box-shadow: 0 20px 60px rgba(0,0,0,0.5); cursor: crosshair; border-radius: 8px; }
+
+        /* Right Sidebar - Properties */
+        .properties-panel { width: 300px; background-color: var(--bg-panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+        .prop-section { padding: 20px; border-bottom: 1px solid var(--border); }
+        .prop-title { font-size: 12px; color: var(--accent-gold); text-transform: uppercase; font-weight: 900; margin-bottom: 15px; }
+
+        .prop-item { margin-bottom: 15px; }
+        .prop-label { font-size: 11px; color: #a1a1aa; text-transform: uppercase; margin-bottom: 5px; font-weight: 700; }
+        .prop-input { width: 100%; background: #1a1a1a; color: var(--text-light); border: 1px solid var(--border); padding: 10px; border-radius: 6px; font-size: 12px; }
+
+        .slider { width: 100%; accent-color: var(--accent-gold); }
+
+        .prop-display { background: #1a1a1a; padding: 12px; border-radius: 6px; font-size: 12px; color: var(--accent-gold); font-weight: 700; }
+
+        /* Bottom Status Bar */
+        .status-bar { background: var(--bg-header); padding: 15px 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; font-size: 11px; }
+        .status-item { display: flex; align-items: center; gap: 8px; }
+        .status-value { color: var(--accent-gold); font-weight: 700; }
 
         /* Toast Notifications */
         .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10001; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: #0a0a0a; border: 1px solid var(--border); border-left: 4px solid var(--accent-gold); padding: 16px; border-radius: 8px; min-width: 300px; display: flex; align-items: center; gap: 15px; animation: toastSlide 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        .toast { background: var(--bg-panel); border: 1px solid var(--border); border-left: 4px solid var(--accent-gold); padding: 16px; border-radius: 8px; min-width: 300px; display: flex; align-items: center; gap: 15px; animation: slideIn 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         .toast.success { border-left-color: var(--success); }
         .toast.error { border-left-color: var(--danger); }
         .toast.warning { border-left-color: var(--warning); }
-        @keyframes toastSlide { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .toast-icon { font-size: 18px; color: var(--accent-gold); }
         .toast.success .toast-icon { color: var(--success); }
         .toast.error .toast-icon { color: var(--danger); }
-        .toast.warning .toast-icon { color: var(--warning); }
         .toast-message { flex: 1; font-size: 13px; font-weight: 600; }
 
-        /* Settings Panel */
-        .settings-panel { position: fixed; top: 0; right: -400px; width: 400px; height: 100vh; background: var(--bg-panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; z-index: 9000; transition: 0.3s; box-shadow: -4px 0 12px rgba(0,0,0,0.3); }
-        .settings-panel.open { right: 0; }
-        .settings-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .settings-content { flex: 1; overflow-y: auto; padding: 20px; }
-        .settings-section { margin-bottom: 30px; }
-        .settings-section h4 { color: var(--accent-gold); font-size: 13px; text-transform: uppercase; margin-bottom: 15px; font-weight: 800; }
-        .toggle-switch { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #111; border-radius: 8px; margin-bottom: 10px; }
-        .toggle-checkbox { width: 50px; height: 26px; background: #333; border-radius: 13px; position: relative; cursor: pointer; }
-        .toggle-checkbox input { display: none; }
-        .toggle-checkbox input:checked + .toggle-slider { background: var(--accent-gold); }
-        .toggle-slider { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #555; border-radius: 50%; transition: 0.3s; }
-        .toggle-checkbox input:checked + .toggle-slider { left: 27px; background: #000; }
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--bg-panel); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 30px; border-radius: 12px; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
+        .modal-header { color: var(--accent-gold); font-size: 18px; font-weight: 900; margin-bottom: 20px; text-transform: uppercase; }
+        .modal-body { margin-bottom: 20px; }
+        .modal-footer { display: flex; gap: 15px; justify-content: flex-end; }
+        .btn-primary { background: var(--accent-gold); color: #000; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 13px; }
+        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-light); padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; }
 
-        /* History Panel */
-        .history-panel { position: fixed; top: 0; left: -350px; width: 350px; height: 100vh; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 9000; transition: 0.3s; box-shadow: 4px 0 12px rgba(0,0,0,0.3); }
-        .history-panel.open { left: 0; }
-        .history-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .history-content { flex: 1; overflow-y: auto; padding: 20px; }
-        .history-item { padding: 12px; background: #111; border-radius: 8px; margin-bottom: 10px; font-size: 12px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
-        .history-item:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
-        .history-time { font-size: 10px; color: #71717a; margin-top: 5px; }
+        /* Right Click Menu */
+        .context-menu { position: fixed; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 10002; display: none; }
+        .context-menu-item { padding: 12px 20px; cursor: pointer; font-size: 12px; border-bottom: 1px solid var(--border); transition: 0.2s; }
+        .context-menu-item:hover { background: rgba(212, 175, 55, 0.1); color: var(--accent-gold); }
+        .context-menu-item:last-child { border-bottom: none; }
 
-        /* =========================================
-           📱 MOBILE RESPONSIVE FIXES
-           ========================================= */
-        @media (max-width: 1024px) {
-            .sidebar { width: 280px; }
-            .main-area { min-height: 400px; }
+        /* ========== MOBILE RESPONSIVE ========== */
+        @media (max-width: 1200px) {
+            .assets-panel, .properties-panel { width: 250px; }
         }
 
         @media (max-width: 850px) {
-            body { overflow: auto; }
-            .workspace { flex-direction: column; overflow: visible; }
-            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; flex-shrink: 1; }
-            .main-area { flex: none; overflow-y: visible; min-height: 500px; }
-            .top-bar { flex-direction: column; padding: 15px; gap: 10px; text-align: center; }
-            .area-header { flex-direction: column; align-items: flex-start; }
-            .header-controls { width: 100%; flex-direction: column; }
-            .search-box { width: 100%; }
-            .file-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); padding: 15px; gap: 15px; }
-            .file-card { padding: 15px; }
-            .file-icon { font-size: 40px; }
-            .fs-toolbar { flex-direction: column; padding: 15px; gap: 15px; align-items: flex-start; }
-            .fs-stats { width: 100%; justify-content: flex-start; }
-            .fs-stats div { border: none; padding-right: 10px; margin-bottom: 5px; }
-            .export-group { width: 100%; justify-content: space-between; }
-            .export-select { flex: 1; }
-            .canvas-wrapper { padding: 15px; }
-            .settings-panel { width: 100%; right: -100%; }
-            .history-panel { width: 100%; left: -100%; }
-            .toast-container { bottom: 10px; right: 10px; }
-            .toast { min-width: 250px; }
+            .main-container { flex-direction: column; }
+            .assets-panel, .properties-panel { width: 100%; height: auto; max-height: 300px; border: none; }
+            .assets-panel { border-bottom: 1px solid var(--border); }
+            .properties-panel { border-left: none; border-top: 1px solid var(--border); }
+            .canvas-toolbar { flex-wrap: wrap; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Top Bar -->
     <div class="top-bar">
         <div class="brand"><i class="fa-solid fa-crown"></i> AK BANNER <span>NEST</span></div>
-        <div class="server-status" id="serverStatus"><i class="fa-solid fa-satellite-dish"></i> RIP SERVER LINKED</div>
+        <div class="server-status" id="serverStatus"><i class="fa-solid fa-satellite-dish"></i> SERVER READY</div>
         <div class="top-actions">
-            <button class="btn-icon" onclick="toggleHistoryPanel()" title="View History"><i class="fa-solid fa-history"></i></button>
+            <button class="btn-icon" onclick="saveProject()" title="Save Project"><i class="fa-solid fa-save"></i></button>
+            <button class="btn-icon" onclick="exportNesting()" title="Export"><i class="fa-solid fa-download"></i></button>
+            <button class="btn-icon" onclick="sendToTelegram()" title="Send to Telegram"><i class="fa-brands fa-telegram"></i></button>
             <button class="btn-icon" onclick="toggleSettings()" title="Settings"><i class="fa-solid fa-gear"></i></button>
-            <button class="btn-icon" onclick="viewBatchSummary()" title="Batch Summary"><i class="fa-solid fa-chart-bar"></i></button>
         </div>
     </div>
 
-    <div class="workspace">
-        <div class="sidebar">
-            <div class="panel-section">
-                <div class="panel-title"><i class="fa-regular fa-calendar-days"></i> Daily Logs</div>
-                <div class="folder-list" id="folderList"></div>
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar - Assets -->
+        <div class="assets-panel">
+            <div class="panel-header">
+                <div class="panel-title"><i class="fa-solid fa-images"></i> Assets Library</div>
+                <input type="text" id="searchAssets" placeholder="Search..." style="width: 100%; padding: 8px; background: #1a1a1a; border: 1px solid var(--border); border-radius: 6px; color: var(--text-light); font-size: 11px;">
+            </div>
+            <div class="assets-content" id="assetsContainer"></div>
+        </div>
+
+        <!-- Center Canvas Area -->
+        <div class="canvas-area">
+            <div class="canvas-toolbar">
+                <div class="tool-group">
+                    <label>Roll Width (cm):</label>
+                    <input type="number" id="rollWidth" value="200" min="50" max="500">
+                </div>
+                <div class="tool-group">
+                    <label>Gap (cm):</label>
+                    <input type="number" id="gapSize" value="2" min="0" max="10">
+                </div>
+                <div class="tool-group">
+                    <label>Rotation:</label>
+                    <input type="checkbox" id="allowRotation" checked>
+                </div>
+                <button class="tool-btn" onclick="generateNesting()"><i class="fa-solid fa-bolt"></i> Generate Nesting</button>
+                <button class="tool-btn" id="toolSelect" onclick="setTool('select')" title="Select"><i class="fa-solid fa-arrow-pointer"></i></button>
+                <button class="tool-btn" id="toolRotate" onclick="setTool('rotate')" title="Rotate"><i class="fa-solid fa-rotate"></i></button>
+                <button class="tool-btn" id="toolDelete" onclick="setTool('delete')" title="Delete"><i class="fa-solid fa-trash"></i></button>
             </div>
 
-            <div class="panel-section">
-                <div class="panel-title"><i class="fa-solid fa-gears"></i> Production Rules</div>
-                <div class="form-group">
-                    <label>Media Profile (Cost Estimator)</label>
-                    <select id="materialType" onchange="updateRollOptions()">
-                        <option value="banner">Star Flex Banner (350 ETB/m²)</option>
-                        <option value="sticker">Glossy Vinyl Sticker (450 ETB/m²)</option>
-                        <option value="canvas">Premium Canvas (550 ETB/m²)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Roll Feed Width</label>
-                    <select id="rollSize"></select>
-                </div>
-                <div class="form-group">
-                    <label>Bleed / Print Gap (cm)</label>
-                    <input type="number" id="gapSize" value="2" min="0" max="20">
-                </div>
-                <div class="form-group" style="display: flex; align-items: center; gap: 12px; margin-top: 15px; background: #111; padding: 12px; border-radius: 8px; border: 1px solid #222;">
-                    <input type="checkbox" id="allowRotation" checked style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent-gold);">
-                    <label for="allowRotation" style="margin-bottom: 0; cursor: pointer; color: var(--text-light); text-transform: none; letter-spacing: 0;">Smart Auto-Rotation</label>
-                </div>
-            </div>
-
-            <div class="panel-section" style="border-bottom: none; margin-top: auto;">
-                <button class="btn-primary" onclick="startRIPEngine()">
-                    <i class="fa-solid fa-bolt"></i> Generate RIP Layout
-                </button>
-                <button class="btn-secondary" onclick="selectAllFiles()">
-                    <i class="fa-solid fa-check-double"></i> Select All
-                </button>
-                <button class="btn-secondary" onclick="clearAllSelections()">
-                    <i class="fa-solid fa-trash"></i> Clear Selection
-                </button>
+            <div class="nesting-canvas-wrapper">
+                <canvas id="nestingCanvas"></canvas>
             </div>
         </div>
 
-        <div class="main-area">
-            <div class="area-header">
-                <div>
-                    <h2 id="currentFolderName">Asset Directory</h2>
+        <!-- Right Sidebar - Properties -->
+        <div class="properties-panel">
+            <div class="prop-section">
+                <div class="prop-title">Project Stats</div>
+                <div class="prop-item">
+                    <div class="prop-label">Total Items</div>
+                    <div class="prop-display" id="statItems">0</div>
                 </div>
-                <div class="header-controls">
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="searchBar" placeholder="Search filename..." oninput="filterFiles()">
-                    </div>
-                    <button class="btn-icon" onclick="toggleViewMode()" title="Toggle View Mode"><i class="fa-solid fa-grip"></i></button>
+                <div class="prop-item">
+                    <div class="prop-label">Substrate Area</div>
+                    <div class="prop-display" id="statArea">0 m²</div>
                 </div>
-            </div>
-            <div class="file-grid" id="fileGrid"></div>
-            <div class="stats-bar" id="statsBar" style="display: none;">
-                <div class="stat-item">
-                    <span class="stat-label">Total Selected</span>
-                    <span class="stat-value" id="selectedCount">0</span>
+                <div class="prop-item">
+                    <div class="prop-label">Efficiency</div>
+                    <div class="prop-display" id="statEfficiency">0%</div>
                 </div>
-                <div class="stat-item">
-                    <span class="stat-label">Total Copies</span>
-                    <span class="stat-value" id="totalCopies">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Est. Area</span>
-                    <span class="stat-value" id="estArea">0 m²</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Est. Cost</span>
-                    <span class="stat-value" id="estCost">0 ETB</span>
+                <div class="prop-item">
+                    <div class="prop-label">Est. Cost</div>
+                    <div class="prop-display" id="statCost">0 ETB</div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="fullscreen-overlay" id="fullscreenWorkspace">
-        <div class="fs-toolbar">
-            <div class="fs-title"><i class="fa-solid fa-chess-board"></i> Master RIP Layout</div>
-            <div class="fs-stats" id="nestStats"></div>
-            
-            <div class="export-group">
-                <select class="export-select" id="exportFormat">
-                    <option value="png">Lossless High-Res PNG</option>
-                    <option value="jpg">Standard Quality JPG</option>
-                    <option value="pdf">Production PDF</option>
-                    <option value="svg">Vector SVG</option>
-                </select>
-                <button class="btn-export" onclick="executeRIPExport()">
-                    <i class="fa-solid fa-download"></i> Export Final
-                </button>
-                <button class="btn-export" style="background: #8b5cf6;" onclick="printNestLayout()">
-                    <i class="fa-solid fa-print"></i> Print
-                </button>
-                <button class="btn-close" onclick="closeFullscreenEngine()">Close</button>
-            </div>
-        </div>
-        <div class="canvas-wrapper">
-            <canvas id="nestCanvas"></canvas>
-        </div>
-    </div>
-
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <h3>Modify Dimensions</h3>
-            <p id="modalFileName" style="font-size: 12px; margin-bottom: 25px; color: #a1a1aa; word-break: break-all;"></p>
-            <div class="form-group">
-                <label>Width Size (cm)</label>
-                <input type="number" id="editW" step="0.1" min="1">
-            </div>
-            <div class="form-group">
-                <label>Height Size (cm)</label>
-                <input type="number" id="editH" step="0.1" min="1">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeEditModal()">Abort</button>
-                <button class="btn-primary" style="flex: 1;" onclick="applyDimensionModifications()">Update Spec</button>
+            <div class="prop-section">
+                <div class="prop-title">Selected Item</div>
+                <div class="prop-item">
+                    <div class="prop-label">Name</div>
+                    <div class="prop-input" id="selectedItemName">None</div>
+                </div>
+                <div class="prop-item">
+                    <div class="prop-label">Dimensions</div>
+                    <div class="prop-input" id="selectedItemDim">--</div>
+                </div>
+                <div class="prop-item">
+                    <div class="prop-label">Rotation</div>
+                    <input type="range" class="slider" id="rotationSlider" min="0" max="360" value="0">
+                    <div class="prop-display" id="rotationValue">0°</div>
+                </div>
+                <div class="prop-item">
+                    <div class="prop-label">Position X</div>
+                    <div class="prop-input" id="itemPosX">--</div>
+                </div>
+                <div class="prop-item">
+                    <div class="prop-label">Position Y</div>
+                    <div class="prop-input" id="itemPosY">--</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- History Panel -->
-    <div class="history-panel" id="historyPanel">
-        <div class="history-header">
-            <h3 style="color: var(--accent-gold); font-size: 14px;">Recent Activity</h3>
-            <button class="btn-icon" onclick="toggleHistoryPanel()" style="width: 30px; height: 30px; font-size: 14px;"><i class="fa-solid fa-times"></i></button>
-        </div>
-        <div class="history-content" id="historyContent">
-            <p style="color: #71717a; font-size: 12px; text-align: center;">No activity yet</p>
-        </div>
-    </div>
-
-    <!-- Settings Panel -->
-    <div class="settings-panel" id="settingsPanel">
-        <div class="settings-header">
-            <h3 style="color: var(--accent-gold); font-size: 14px;">Settings</h3>
-            <button class="btn-icon" onclick="toggleSettings()" style="width: 30px; height: 30px; font-size: 14px;"><i class="fa-solid fa-times"></i></button>
-        </div>
-        <div class="settings-content">
-            <div class="settings-section">
-                <h4>Display</h4>
-                <div class="toggle-switch">
-                    <span>Dark Mode</span>
-                    <label class="toggle-checkbox">
-                        <input type="checkbox" id="darkModeToggle" checked onchange="toggleDarkMode()">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-                <div class="toggle-switch">
-                    <span>Show Stats</span>
-                    <label class="toggle-checkbox">
-                        <input type="checkbox" id="showStatsToggle" onchange="toggleStats()">
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h4>Notifications</h4>
-                <div class="toggle-switch">
-                    <span>Enable Toast</span>
-                    <label class="toggle-checkbox">
-                        <input type="checkbox" id="toastToggle" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h4>Data</h4>
-                <button class="btn-secondary" onclick="exportAllData()">
-                    <i class="fa-solid fa-download"></i> Export Config
-                </button>
-                <button class="btn-secondary" onclick="clearHistory()">
-                    <i class="fa-solid fa-trash"></i> Clear History
-                </button>
-            </div>
-        </div>
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-item"><i class="fa-solid fa-cube"></i> Items: <span class="status-value" id="statusItems">0</span></div>
+        <div class="status-item"><i class="fa-solid fa-ruler"></i> Length: <span class="status-value" id="statusLength">0 cm</span></div>
+        <div class="status-item"><i class="fa-solid fa-chart-pie"></i> Usage: <span class="status-value" id="statusUsage">0%</span></div>
+        <div class="status-item"><i class="fa-solid fa-leaf"></i> Zoom: <span class="status-value" id="zoomLevel">100%</span></div>
+        <div class="status-item" id="cursorPos" style="margin-left: auto;">X: 0 Y: 0</div>
     </div>
 
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Export Modal -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">Export Nesting</div>
+            <div class="modal-body">
+                <div class="prop-item">
+                    <label class="prop-label">Export Format:</label>
+                    <select id="exportFormat" class="prop-input">
+                        <option value="png">High-Res PNG (2400 DPI)</option>
+                        <option value="pdf">Production PDF</option>
+                        <option value="svg">Vector SVG</option>
+                        <option value="json">Project JSON</option>
+                    </select>
+                </div>
+                <div class="prop-item">
+                    <label class="prop-label">Include Labels</label>
+                    <input type="checkbox" id="exportLabels" checked>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('exportModal')">Cancel</button>
+                <button class="btn-primary" onclick="confirmExport()">Export</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="contextMenu">
+        <div class="context-menu-item" onclick="duplicateItem()">Duplicate</div>
+        <div class="context-menu-item" onclick="rotateItem()">Rotate 90°</div>
+        <div class="context-menu-item" onclick="deleteItem()">Delete</div>
+        <div class="context-menu-item" onclick="sendToBack()">Send to Back</div>
+        <div class="context-menu-item" onclick="bringToFront()">Bring to Front</div>
+    </div>
+
     <script>
-        const API_URL = 'https://wubet-print-api.onrender.com/api/files';
-        let globalFilesArray = [];
-        let folderSegmentationMap = {};
-        let currentSelectedDirectory = '';
-        let activityHistory = [];
-        let lastNestingResult = null;
+        const API_URL = 'https://wubet-print-api.onrender.com/api';
+        
+        let canvas = document.getElementById('nestingCanvas');
+        let ctx = canvas.getContext('2d');
+        let currentTool = 'select';
+        let selectedItem = null;
+        let nestingItems = [];
+        let allAssets = [];
+        let zoomLevel = 1;
+        let panX = 0, panY = 0;
 
         const PRICING_RATES = { banner: 350, sticker: 450, canvas: 550 };
 
         // ========== TOAST NOTIFICATIONS ==========
-        function showToast(message, type = 'success', duration = 3000) {
-            if (!document.getElementById('toastToggle')?.checked && type !== 'error') return;
-            
+        function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
@@ -413,537 +306,462 @@
             `;
             
             container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.animation = 'toastSlide 0.3s ease reverse';
-                setTimeout(() => toast.remove(), 300);
-            }, duration);
+            setTimeout(() => toast.remove(), 3000);
         }
 
-        // ========== ACTIVITY HISTORY ==========
-        function addToHistory(action, details = '') {
-            const timestamp = new Date();
-            const historyEntry = {
-                action,
-                details,
-                time: timestamp.toLocaleTimeString(),
-                timestamp
-            };
-            activityHistory.unshift(historyEntry);
-            if (activityHistory.length > 20) activityHistory.pop();
-            updateHistoryPanel();
-            addToLocalStorage('activityHistory', activityHistory);
+        // ========== CANVAS INITIALIZATION ==========
+        function initCanvas() {
+            const wrapper = document.querySelector('.nesting-canvas-wrapper');
+            canvas.width = wrapper.clientWidth - 40;
+            canvas.height = wrapper.clientHeight - 40;
+            redrawCanvas();
         }
 
-        function updateHistoryPanel() {
-            const historyContent = document.getElementById('historyContent');
-            if (activityHistory.length === 0) {
-                historyContent.innerHTML = '<p style="color: #71717a; font-size: 12px; text-align: center;">No activity yet</p>';
-                return;
-            }
-            
-            historyContent.innerHTML = activityHistory.map(entry => `
-                <div class="history-item">
-                    <div style="font-weight: 700;">${entry.action}</div>
-                    ${entry.details ? `<div style="color: #a1a1aa; font-size: 11px;">${entry.details}</div>` : ''}
-                    <div class="history-time">${entry.time}</div>
-                </div>
-            `).join('');
-        }
-
-        function toggleHistoryPanel() {
-            document.getElementById('historyPanel').classList.toggle('open');
-        }
-
-        // ========== SETTINGS ==========
-        function toggleSettings() {
-            document.getElementById('settingsPanel').classList.toggle('open');
-        }
-
-        function toggleDarkMode() {
-            document.body.style.filter = document.getElementById('darkModeToggle').checked ? 'none' : 'invert(1)';
-            addToLocalStorage('darkMode', document.getElementById('darkModeToggle').checked);
-        }
-
-        function toggleStats() {
-            const statsBar = document.getElementById('statsBar');
-            statsBar.style.display = document.getElementById('showStatsToggle').checked ? 'flex' : 'none';
-            addToLocalStorage('showStats', document.getElementById('showStatsToggle').checked);
-        }
-
-        function updateRollOptions() {
-            const material = document.getElementById('materialType').value;
-            const rollSelect = document.getElementById('rollSize');
-            const options = {
-                banner: `<option value="200">2.0M Roll (200cm)</option><option value="300">3.0M Roll (300cm)</option>`,
-                sticker: `<option value="107">1.07M Roll (107cm)</option><option value="127">1.27M Roll (127cm)</option><option value="152">1.52M Roll (152cm)</option>`,
-                canvas: `<option value="200">2.0M Roll (200cm)</option><option value="250">2.5M Roll (250cm)</option>`
-            };
-            rollSelect.innerHTML = options[material];
-            addToHistory('Material Changed', `Switched to ${material}`);
-        }
-
-        // ========== LOCAL STORAGE HELPERS ==========
-        function addToLocalStorage(key, value) {
-            localStorage.setItem(key, JSON.stringify(value));
-        }
-
-        function getFromLocalStorage(key) {
-            const value = localStorage.getItem(key);
-            return value ? JSON.parse(value) : null;
-        }
-
-        function exportAllData() {
-            const data = {
-                files: globalFilesArray,
-                history: activityHistory,
-                settings: {
-                    material: document.getElementById('materialType').value,
-                    rollSize: document.getElementById('rollSize').value,
-                    gap: document.getElementById('gapSize').value
-                }
-            };
-            
-            const dataStr = JSON.stringify(data, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `banner-nest-backup-${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-            
-            showToast('Configuration exported successfully', 'success');
-            addToHistory('Data Exported', 'Backup created');
-        }
-
-        function clearHistory() {
-            if (confirm('Clear all activity history?')) {
-                activityHistory = [];
-                updateHistoryPanel();
-                localStorage.removeItem('activityHistory');
-                showToast('History cleared', 'success');
-            }
-        }
-
-        // ========== FILE MANAGEMENT ==========
-        async function fetchSystemWorkspace() {
+        // ========== ASSET LOADING ==========
+        async function loadAssets() {
             try {
-                const res = await fetch(API_URL);
-                if (!res.ok) throw new Error('Server unavailable');
-                globalFilesArray = await res.json();
-                
-                globalFilesArray = globalFilesArray.map((file, idx) => ({
-                    ...file,
-                    qty: 1,
-                    selected: false,
-                    id: idx
-                }));
-
-                groupAssetsByDirectory();
-                showToast('Files loaded successfully', 'success');
-                addToHistory('Files Loaded', `${globalFilesArray.length} files fetched`);
-            } catch (err) {
-                document.getElementById('serverStatus').classList.add('offline');
-                document.getElementById('serverStatus').innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> SYSTEM OFFLINE';
-                showToast('Failed to connect to server', 'error');
-                addToHistory('Connection Error', 'API server unavailable');
+                const response = await fetch(`${API_URL}/files`);
+                allAssets = await response.json();
+                renderAssetsPanel();
+                showToast('Assets loaded successfully', 'success');
+            } catch (error) {
+                showToast('Failed to load assets: ' + error.message, 'error');
+                console.error(error);
             }
         }
 
-        function groupAssetsByDirectory() {
-            folderSegmentationMap = {};
-            globalFilesArray.forEach((file, idx) => {
-                const folderName = file.folder || 'Unclassified';
-                if (!folderSegmentationMap[folderName]) folderSegmentationMap[folderName] = [];
-                folderSegmentationMap[folderName].push({ ...file, index: idx });
-            });
-            renderDirectoryTree();
-        }
-
-        function renderDirectoryTree() {
-            const list = document.getElementById('folderList');
-            list.innerHTML = '';
-            const sortedFolders = Object.keys(folderSegmentationMap).sort().reverse();
-
-            if (sortedFolders.length === 0) {
-                list.innerHTML = '<div style="color:#52525b; font-size:12px; padding:10px;">No files found on server.</div>';
-                return;
-            }
-
-            sortedFolders.forEach(folder => {
-                const count = folderSegmentationMap[folder].length;
+        function renderAssetsPanel() {
+            const container = document.getElementById('assetsContainer');
+            container.innerHTML = '';
+            
+            allAssets.forEach(asset => {
                 const div = document.createElement('div');
-                div.className = `folder-item ${currentSelectedDirectory === folder ? 'active' : ''}`;
-                div.innerHTML = `<span><i class="fa-regular fa-folder-open"></i> ${folder}</span> <span style="background:#000; font-size:12px; padding:3px 10px; border-radius:12px; font-weight:800;">${count}</span>`;
-                div.onclick = () => selectActiveDirectory(folder);
-                list.appendChild(div);
-            });
-
-            if (!currentSelectedDirectory && sortedFolders.length > 0) {
-                selectActiveDirectory(sortedFolders[0]);
-            }
-        }
-
-        function selectActiveDirectory(folder) {
-            currentSelectedDirectory = folder;
-            document.getElementById('currentFolderName').innerText = `Directory: /${folder}/`;
-            renderDirectoryTree();
-            renderActiveFileGrid(folderSegmentationMap[folder]);
-            addToHistory('Folder Selected', folder);
-        }
-
-        function renderActiveFileGrid(files) {
-            const grid = document.getElementById('fileGrid');
-            grid.innerHTML = '';
-
-            files.forEach(file => {
-                const globalIdx = file.index;
-                const w = file.size.width;
-                const h = file.size.height;
-                
-                const card = document.createElement('div');
-                card.className = `file-card ${file.selected ? 'selected' : ''}`;
-                
-                card.onclick = function(e) {
-                    if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.className !== 'qty-btn') {
-                        const cb = this.querySelector('.file-checkbox');
-                        cb.checked = !cb.checked;
-                        toggleFileSelectionState(globalIdx, cb.checked, this);
-                    }
-                };
-
-                card.innerHTML = `
-                    <input type="checkbox" class="file-checkbox" ${file.selected ? 'checked' : ''} value="${globalIdx}" onclick="toggleFileSelectionState(${globalIdx}, this.checked, this.parentElement)">
-                    <div class="file-icon"><i class="fa-regular fa-image"></i></div>
-                    <div class="file-name" title="${file.name}">${file.name}</div>
-                    <div class="card-controls">
-                        <div class="size-badge" id="size-label-${globalIdx}">${w} x ${h} cm</div>
-                        <div class="qty-row">
-                            <label>COPIES</label>
-                            <input type="number" class="qty-input" min="1" value="${file.qty}" onchange="updateFileQuantityState(${globalIdx}, this.value)">
-                        </div>
-                        <button class="btn-edit-dim" onclick="openDimensionsEditorModal(${globalIdx}, '${file.name}', '${w}', '${h}')"><i class="fa-solid fa-pen-ruler"></i> Edit Size</button>
+                div.className = 'asset-item';
+                div.innerHTML = `
+                    <div class="asset-thumb">
+                        <img src="${asset.path}" alt="${asset.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect fill=%22%23333%22 width=%2260%22 height=%2260%22/%3E%3Ctext x=%2230%22 y=%2230%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2212%22%3E?%3C/text%3E%3C/svg%3E'">
+                    </div>
+                    <div class="asset-info">
+                        <div class="asset-name" title="${asset.name}">${asset.name.substring(0, 20)}</div>
+                        <div class="asset-size">${asset.size.width} × ${asset.size.height}cm</div>
                     </div>
                 `;
-                grid.appendChild(card);
+                div.draggable = true;
+                div.ondragstart = (e) => {
+                    e.dataTransfer.effectAllowed = 'copy';
+                    e.dataTransfer.setData('assetId', asset.id);
+                };
+                div.onclick = () => addItemToNesting(asset);
+                container.appendChild(div);
+            });
+        }
+
+        // ========== NESTING ENGINE ==========
+        async function generateNesting() {
+            const rollWidth = parseInt(document.getElementById('rollWidth').value);
+            const gapSize = parseInt(document.getElementById('gapSize').value);
+            const allowRotation = document.getElementById('allowRotation').checked;
+
+            if (nestingItems.length === 0) {
+                showToast('Add items to nesting first', 'warning');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/nesting/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        items: nestingItems,
+                        rollWidth: rollWidth,
+                        config: { gap: gapSize, allowRotation }
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.error) {
+                    showToast('Error: ' + result.error, 'error');
+                    return;
+                }
+
+                nestingItems = result.items;
+                updateStats(result);
+                redrawCanvas();
+                showToast('Nesting generated successfully!', 'success');
+            } catch (error) {
+                showToast('Failed to generate nesting: ' + error.message, 'error');
+            }
+        }
+
+        function addItemToNesting(asset) {
+            const item = {
+                id: `item-${Date.now()}`,
+                name: asset.name,
+                width: asset.size.width,
+                height: asset.size.height,
+                x: 10 + (nestingItems.length * 5),
+                y: 10 + (nestingItems.length * 5),
+                rotation: 0,
+                quantity: 1,
+                path: asset.path
+            };
+            
+            nestingItems.push(item);
+            redrawCanvas();
+            showToast(`Added: ${asset.name}`, 'success');
+        }
+
+        // ========== CANVAS DRAWING ==========
+        function redrawCanvas() {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid
+            drawGrid();
+            
+            // Draw items
+            nestingItems.forEach((item, idx) => {
+                drawItem(item, item === selectedItem);
             });
 
-            updateStats();
+            // Draw ruler
+            drawRuler();
         }
 
-        function toggleFileSelectionState(idx, isChecked, element) {
-            globalFilesArray[idx].selected = isChecked;
-            element.classList.toggle('selected', isChecked);
-            updateStats();
+        function drawItem(item, isSelected) {
+            const x = item.x * zoomLevel + panX;
+            const y = item.y * zoomLevel + panY;
+            const w = item.width * zoomLevel;
+            const h = item.height * zoomLevel;
+
+            ctx.save();
+            ctx.translate(x + w / 2, y + h / 2);
+            ctx.rotate((item.rotation * Math.PI) / 180);
+
+            // Draw item rectangle
+            ctx.fillStyle = isSelected ? 'rgba(212, 175, 55, 0.2)' : 'rgba(37, 99, 235, 0.1)';
+            ctx.strokeStyle = isSelected ? '#d4af37' : '#2563eb';
+            ctx.lineWidth = isSelected ? 3 : 1;
+            ctx.fillRect(-w / 2, -h / 2, w, h);
+            ctx.strokeRect(-w / 2, -h / 2, w, h);
+
+            // Draw text
+            ctx.font = 'bold 12px Arial';
+            ctx.fillStyle = '#000';
+            ctx.textAlign = 'center';
+            ctx.fillText(item.name.substring(0, 15), 0, 0);
+
+            // Draw dimensions
+            ctx.font = '10px Arial';
+            ctx.fillStyle = '#666';
+            ctx.fillText(`${item.width}×${item.height}cm`, 0, 15);
+
+            ctx.restore();
+
+            // Draw handles if selected
+            if (isSelected) {
+                drawHandles(x, y, w, h);
+            }
         }
 
-        function updateFileQuantityState(idx, val) {
-            globalFilesArray[idx].qty = Math.max(1, parseInt(val) || 1);
-            updateStats();
+        function drawHandles(x, y, w, h) {
+            const handleSize = 8;
+            const handles = [
+                [x, y], [x + w, y], [x + w, y + h], [x, y + h], // Corners
+                [x + w / 2, y], [x + w, y + h / 2] // Edges
+            ];
+
+            handles.forEach(([hx, hy]) => {
+                ctx.fillStyle = '#d4af37';
+                ctx.fillRect(hx - handleSize / 2, hy - handleSize / 2, handleSize, handleSize);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(hx - handleSize / 2, hy - handleSize / 2, handleSize, handleSize);
+            });
         }
 
-        function selectAllFiles() {
-            globalFilesArray.forEach(f => f.selected = true);
-            renderActiveFileGrid(folderSegmentationMap[currentSelectedDirectory] || []);
-            showToast('All files selected', 'success');
-            addToHistory('Batch Action', 'Selected all files');
+        function drawGrid() {
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.lineWidth = 1;
+            const gridSize = 50 * zoomLevel;
+
+            for (let i = 0; i < canvas.width; i += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, canvas.height);
+                ctx.stroke();
+            }
+
+            for (let i = 0; i < canvas.height; i += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(canvas.width, i);
+                ctx.stroke();
+            }
         }
 
-        function clearAllSelections() {
-            globalFilesArray.forEach(f => f.selected = false);
-            renderActiveFileGrid(folderSegmentationMap[currentSelectedDirectory] || []);
-            showToast('Selections cleared', 'success');
-            addToHistory('Batch Action', 'Cleared all selections');
+        function drawRuler() {
+            ctx.fillStyle = '#000';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+
+            // Horizontal ruler
+            for (let i = 0; i < canvas.width; i += 100 * zoomLevel) {
+                ctx.fillRect(i, 0, 1, 10);
+                ctx.fillText(Math.round(i / zoomLevel), i, 25);
+            }
         }
 
-        function filterFiles() {
-            const query = document.getElementById('searchBar').value.toLowerCase();
-            const currentFolderFiles = folderSegmentationMap[currentSelectedDirectory] || [];
-            const filtered = currentFolderFiles.filter(f => f.name.toLowerCase().includes(query));
-            renderActiveFileGrid(filtered);
+        // ========== CANVAS EVENTS ==========
+        canvas.addEventListener('mousedown', (e) => handleCanvasMouseDown(e));
+        canvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e));
+        canvas.addEventListener('mouseup', (e) => handleCanvasMouseUp(e));
+        canvas.addEventListener('contextmenu', (e) => handleCanvasContextMenu(e));
+        canvas.addEventListener('wheel', (e) => handleCanvasZoom(e));
+        canvas.addEventListener('drop', (e) => handleCanvasDrop(e));
+        canvas.addEventListener('dragover', (e) => e.preventDefault());
+
+        function handleCanvasMouseDown(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left - panX) / zoomLevel;
+            const y = (e.clientY - rect.top - panY) / zoomLevel;
+
+            // Check if clicked on an item
+            const clicked = nestingItems.find(item => {
+                return x >= item.x && x <= item.x + item.width &&
+                       y >= item.y && y <= item.y + item.height;
+            });
+
+            if (currentTool === 'select') {
+                selectedItem = clicked || null;
+                if (selectedItem) {
+                    updatePropertiesPanel(selectedItem);
+                }
+                redrawCanvas();
+            } else if (currentTool === 'delete' && clicked) {
+                nestingItems = nestingItems.filter(item => item !== clicked);
+                redrawCanvas();
+            }
+
+            updateCursorPosition(e);
         }
 
-        function updateStats() {
-            const selected = globalFilesArray.filter(f => f.selected);
-            const totalCopies = selected.reduce((sum, f) => sum + f.qty, 0);
-            const totalArea = selected.reduce((sum, f) => sum + (f.size.width * f.size.height * f.qty), 0) / 10000;
-            const material = document.getElementById('materialType').value;
-            const totalCost = (totalArea * PRICING_RATES[material]).toFixed(2);
+        function handleCanvasMouseMove(e) {
+            updateCursorPosition(e);
 
-            document.getElementById('selectedCount').innerText = selected.length;
-            document.getElementById('totalCopies').innerText = totalCopies;
-            document.getElementById('estArea').innerText = totalArea.toFixed(2) + ' m²';
-            document.getElementById('estCost').innerText = totalCost + ' ETB';
+            if (currentTool === 'select' && selectedItem && e.buttons === 1) {
+                const rect = canvas.getBoundingClientRect();
+                const deltaX = e.movementX / zoomLevel;
+                const deltaY = e.movementY / zoomLevel;
+
+                selectedItem.x += deltaX;
+                selectedItem.y += deltaY;
+                redrawCanvas();
+                updatePropertiesPanel(selectedItem);
+            }
+        }
+
+        function handleCanvasMouseUp(e) {}
+
+        function handleCanvasContextMenu(e) {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left - panX) / zoomLevel;
+            const y = (e.clientY - rect.top - panY) / zoomLevel;
+
+            const clicked = nestingItems.find(item => {
+                return x >= item.x && x <= item.x + item.width &&
+                       y >= item.y && y <= item.y + item.height;
+            });
+
+            if (clicked) {
+                selectedItem = clicked;
+                const menu = document.getElementById('contextMenu');
+                menu.style.left = e.clientX + 'px';
+                menu.style.top = e.clientY + 'px';
+                menu.style.display = 'block';
+            }
+        }
+
+        function handleCanvasZoom(e) {
+            e.preventDefault();
+            const oldZoom = zoomLevel;
+            zoomLevel += e.deltaY > 0 ? -0.1 : 0.1;
+            zoomLevel = Math.max(0.1, Math.min(3, zoomLevel));
+            
+            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+            redrawCanvas();
+        }
+
+        function handleCanvasDrop(e) {
+            e.preventDefault();
+            const assetId = e.dataTransfer.getData('assetId');
+            const asset = allAssets.find(a => a.id === assetId);
+            if (asset) {
+                addItemToNesting(asset);
+            }
+        }
+
+        function updateCursorPosition(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.round((e.clientX - rect.left - panX) / zoomLevel);
+            const y = Math.round((e.clientY - rect.top - panY) / zoomLevel);
+            document.getElementById('cursorPos').textContent = `X: ${x} Y: ${y}`;
+        }
+
+        // ========== TOOL MANAGEMENT ==========
+        function setTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tool' + tool.charAt(0).toUpperCase() + tool.slice(1)).classList.add('active');
+        }
+
+        // ========== PROPERTIES PANEL ==========
+        function updatePropertiesPanel(item) {
+            document.getElementById('selectedItemName').textContent = item.name;
+            document.getElementById('selectedItemDim').textContent = `${item.width} × ${item.height} cm`;
+            document.getElementById('itemPosX').textContent = item.x.toFixed(1);
+            document.getElementById('itemPosY').textContent = item.y.toFixed(1);
+            document.getElementById('rotationSlider').value = item.rotation;
+            document.getElementById('rotationValue').textContent = item.rotation + '°';
+
+            document.getElementById('rotationSlider').oninput = (e) => {
+                item.rotation = parseFloat(e.target.value);
+                document.getElementById('rotationValue').textContent = item.rotation + '°';
+                redrawCanvas();
+            };
+        }
+
+        // ========== STATS UPDATE ==========
+        function updateStats(result) {
+            document.getElementById('statItems').textContent = result.items.length;
+            document.getElementById('statArea').textContent = result.totalArea.toFixed(2) + ' m²';
+            document.getElementById('statEfficiency').textContent = result.efficiency + '%';
+            document.getElementById('statCost').textContent = (result.totalArea * PRICING_RATES.banner).toFixed(0) + ' ETB';
+
+            document.getElementById('statusItems').textContent = result.items.length;
+            document.getElementById('statusLength').textContent = result.totalLength + ' cm';
+            document.getElementById('statusUsage').textContent = result.efficiency + '%';
+        }
+
+        // ========== CONTEXT MENU ACTIONS ==========
+        function duplicateItem() {
+            if (!selectedItem) return;
+            const newItem = { ...selectedItem, id: `item-${Date.now()}`, x: selectedItem.x + 10, y: selectedItem.y + 10 };
+            nestingItems.push(newItem);
+            redrawCanvas();
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+
+        function rotateItem() {
+            if (!selectedItem) return;
+            selectedItem.rotation = (selectedItem.rotation + 90) % 360;
+            updatePropertiesPanel(selectedItem);
+            redrawCanvas();
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+
+        function deleteItem() {
+            if (!selectedItem) return;
+            nestingItems = nestingItems.filter(item => item !== selectedItem);
+            selectedItem = null;
+            redrawCanvas();
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+
+        function sendToBack() {
+            if (!selectedItem) return;
+            const idx = nestingItems.indexOf(selectedItem);
+            nestingItems.splice(idx, 1);
+            nestingItems.unshift(selectedItem);
+            redrawCanvas();
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+
+        function bringToFront() {
+            if (!selectedItem) return;
+            const idx = nestingItems.indexOf(selectedItem);
+            nestingItems.splice(idx, 1);
+            nestingItems.push(selectedItem);
+            redrawCanvas();
+            document.getElementById('contextMenu').style.display = 'none';
+        }
+
+        // ========== FILE OPERATIONS ==========
+        function saveProject() {
+            const project = {
+                name: prompt('Project name:', 'Untitled Project'),
+                items: nestingItems,
+                settings: {
+                    rollWidth: document.getElementById('rollWidth').value,
+                    gap: document.getElementById('gapSize').value
+                },
+                saved: new Date().toISOString()
+            };
+
+            localStorage.setItem('project-' + project.name, JSON.stringify(project));
+            showToast('Project saved: ' + project.name, 'success');
+        }
+
+        function exportNesting() {
+            document.getElementById('exportModal').style.display = 'flex';
+        }
+
+        function confirmExport() {
+            const format = document.getElementById('exportFormat').value;
+            
+            if (format === 'json') {
+                const data = JSON.stringify(nestingItems, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'nesting-layout.json';
+                a.click();
+            } else if (format === 'png') {
+                const link = document.createElement('a');
+                link.download = 'nesting-layout.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+
+            closeModal('exportModal');
+            showToast('Exported successfully', 'success');
+        }
+
+        function sendToTelegram() {
+            const canvas_data = canvas.toDataURL('image/png');
+            showToast('Sending to Telegram...', 'success');
+            // Implementation would send to server to post to Telegram
+        }
+
+        function toggleSettings() {
+            showToast('Settings panel coming soon', 'warning');
         }
 
         // ========== MODAL FUNCTIONS ==========
-        let workingModalGlobalIndex = -1;
-
-        function openDimensionsEditorModal(idx, name, w, h) {
-            workingModalGlobalIndex = idx;
-            document.getElementById('modalFileName').innerText = name;
-            document.getElementById('editW').value = w === '?' ? '' : w;
-            document.getElementById('editH').value = h === '?' ? '' : h;
-            document.getElementById('editModal').style.display = 'flex';
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
-        }
-
-        function applyDimensionModifications() {
-            const w = document.getElementById('editW').value;
-            const h = document.getElementById('editH').value;
-            if (!w || !h) {
-                showToast('Please enter valid dimensions', 'warning');
-                return;
-            }
-            
-            globalFilesArray[workingModalGlobalIndex].size.width = parseFloat(w);
-            globalFilesArray[workingModalGlobalIndex].size.height = parseFloat(h);
-            
-            closeEditModal();
-            groupAssetsByDirectory();
-            selectActiveDirectory(currentSelectedDirectory);
-            showToast('Dimensions updated', 'success');
-            addToHistory('Dimensions Modified', `File ${globalFilesArray[workingModalGlobalIndex].name}`);
-        }
-
-        // ========== RIP NESTING ENGINE ==========
-        function startRIPEngine() {
-            const activeSelections = globalFilesArray.filter(f => f.selected);
-            if (activeSelections.length === 0) {
-                showToast('No files selected for processing', 'warning');
-                return;
-            }
-
-            const rollWidth = parseInt(document.getElementById('rollSize').value);
-            const gap = parseInt(document.getElementById('gapSize').value) || 0;
-            const allowRot = document.getElementById('allowRotation').checked;
-            const activeMaterial = document.getElementById('materialType').value;
-
-            let processingPool = [];
-            
-            activeSelections.forEach(file => {
-                for (let k = 0; k < file.qty; k++) {
-                    let w = parseInt(file.size.width);
-                    let h = parseInt(file.size.height);
-                    
-                    if (isNaN(w) || isNaN(h)) {
-                        showToast(`File Error: ${file.name} lacks valid dimensions`, 'error');
-                        return;
-                    }
-
-                    if (allowRot && w > h && w > rollWidth && h <= rollWidth) {
-                        let temp = w; w = h; h = temp;
-                    } else if (allowRot && h > w && h <= rollWidth && (w + gap) > (h + gap)) {
-                        let temp = w; w = h; h = temp;
-                    }
-
-                    processingPool.push({ name: file.name, w: w, h: h });
-                }
-            });
-
-            processingPool.sort((a, b) => b.h - a.h);
-
-            let cx = 0, cy = 0, currentRowHeight = 0;
-            let combinedAssetArea = 0;
-
-            processingPool.forEach(item => {
-                const allocationW = item.w + gap;
-                const allocationH = item.h + gap;
-
-                if (cx + allocationW > rollWidth) {
-                    cy += currentRowHeight;
-                    cx = 0;
-                    currentRowHeight = 0;
-                }
-                
-                item.x = cx;
-                item.y = cy;
-                
-                if (allocationH > currentRowHeight) currentRowHeight = allocationH;
-                cx += allocationW;
-
-                combinedAssetArea += (item.w * item.h); 
-            });
-
-            const totalRequiredLength = cy + currentRowHeight;
-            const totalRollUsedArea = rollWidth * totalRequiredLength;
-            
-            const performanceEfficiency = totalRollUsedArea > 0 ? ((combinedAssetArea / totalRollUsedArea) * 100).toFixed(1) : 0;
-            const totalSquareMeters = (totalRollUsedArea / 10000).toFixed(2);
-            const overallCostEstimation = (totalSquareMeters * PRICING_RATES[activeMaterial]).toFixed(2);
-
-            lastNestingResult = { processingPool, totalRequiredLength, totalSquareMeters, performanceEfficiency, overallCostEstimation, rollWidth };
-
-            renderNestingCanvas(processingPool, rollWidth, totalRequiredLength);
-
-            document.getElementById('nestStats').innerHTML = `
-                <div>Length Required<br><span>${totalRequiredLength} cm</span></div>
-                <div>Substrate Area<br><span>${totalSquareMeters} m²</span></div>
-                <div>Efficiency<br><span class="${performanceEfficiency > 80 ? 'highlight' : ''}">${performanceEfficiency}%</span></div>
-                <div>Est. Base Cost<br><span style="color:var(--accent-gold);">${overallCostEstimation} ETB</span></div>
-            `;
-
-            document.getElementById('fullscreenWorkspace').style.display = 'flex';
-            showToast('RIP layout generated successfully', 'success');
-            addToHistory('RIP Generated', `${processingPool.length} items nested - ${performanceEfficiency}% efficiency`);
-        }
-
-        function renderNestingCanvas(processingPool, rollWidth, totalRequiredLength) {
-            const scale = 10; 
-            const canvas = document.getElementById('nestCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            canvas.width = rollWidth * scale;
-            canvas.height = totalRequiredLength * scale;
-            
-            ctx.fillStyle = '#ffffff'; 
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            processingPool.forEach((item, idx) => {
-                const rx = item.x * scale, ry = item.y * scale;
-                const rw = item.w * scale, rh = item.h * scale;
-
-                ctx.fillStyle = idx % 2 === 0 ? 'rgba(212, 175, 55, 0.05)' : 'rgba(37, 99, 235, 0.05)';
-                ctx.strokeStyle = idx % 2 === 0 ? '#d4af37' : '#2563eb';
-                ctx.lineWidth = 4;
-                ctx.fillRect(rx, ry, rw, rh);
-                ctx.strokeRect(rx, ry, rw, rh);
-
-                ctx.beginPath();
-                ctx.moveTo(rx, ry);
-                ctx.lineTo(rx + rw, ry + rh);
-                ctx.moveTo(rx + rw, ry);
-                ctx.lineTo(rx, ry + rh);
-                ctx.strokeStyle = 'rgba(212, 175, 55, 0.1)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                ctx.fillStyle = '#000000';
-                ctx.font = 'bold 36px Segoe UI'; 
-                ctx.fillText(`${item.w} x ${item.h} cm`, rx + 25, ry + 55);
-                
-                ctx.fillStyle = '#555555';
-                ctx.font = 'bold 24px Segoe UI';
-                const optimizedName = item.name.length > 30 ? item.name.substring(0, 30) + '...' : item.name;
-                ctx.fillText(optimizedName, rx + 25, ry + 100);
-
-                // Item number
-                ctx.fillStyle = '#d4af37';
-                ctx.font = 'bold 20px Segoe UI';
-                ctx.fillText(`#${idx + 1}`, rx + 10, ry + 20);
-            });
-        }
-
-        // ========== EXPORT FUNCTIONS ==========
-        function executeRIPExport() {
-            const format = document.getElementById('exportFormat').value;
-            const canvas = document.getElementById('nestCanvas');
-            const timestamp = new Date().toISOString().split('T')[0];
-            const exportedFileName = `AK_BANNER_RIP_${timestamp}`;
-
-            if (format === 'png' || format === 'jpg') {
-                const link = document.createElement('a');
-                link.download = `${exportedFileName}.${format}`;
-                link.href = canvas.toDataURL(`image/${format === 'jpg' ? 'jpeg' : 'png'}`, 1.0);
-                link.click();
-            } else if (format === 'pdf') {
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({
-                    orientation: canvas.width > canvas.height ? 'l' : 'p',
-                    unit: 'px',
-                    format: [canvas.width, canvas.height]
-                });
-                pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', 0, 0, canvas.width, canvas.height);
-                pdf.save(`${exportedFileName}.pdf`);
-            } else if (format === 'svg') {
-                exportToSVG(exportedFileName);
-            }
-
-            showToast(`Exported as ${format.toUpperCase()}`, 'success');
-            addToHistory('File Exported', `Format: ${format.toUpperCase()}`);
-        }
-
-        function exportToSVG(filename) {
-            if (!lastNestingResult) return;
-            
-            const { processingPool, rollWidth, totalRequiredLength } = lastNestingResult;
-            const scale = 0.1;
-            
-            let svg = `<svg width="${rollWidth * scale}cm" height="${totalRequiredLength * scale}cm" viewBox="0 0 ${rollWidth} ${totalRequiredLength}" xmlns="http://www.w3.org/2000/svg">`;
-            svg += `<rect width="${rollWidth}" height="${totalRequiredLength}" fill="white" stroke="black" stroke-width="1"/>`;
-            
-            processingPool.forEach(item => {
-                svg += `<rect x="${item.x}" y="${item.y}" width="${item.w}" height="${item.h}" fill="none" stroke="#d4af37" stroke-width="0.2"/>`;
-                svg += `<text x="${item.x + 1}" y="${item.y + 2}" font-size="1" fill="black">${item.name}</text>`;
-            });
-            
-            svg += `</svg>`;
-            
-            const blob = new Blob([svg], { type: 'image/svg+xml' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `${filename}.svg`;
-            link.click();
-        }
-
-        function printNestLayout() {
-            const printWindow = window.open('', '', 'height=600,width=800');
-            const canvas = document.getElementById('nestCanvas');
-            
-            printWindow.document.write('<html><head><title>Print RIP Layout</title></head><body>');
-            printWindow.document.write(`<img src="${canvas.toDataURL()}" style="width:100%; max-width:100%;">`);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.print();
-            
-            addToHistory('Document Printed', 'RIP layout sent to printer');
-        }
-
-        function closeFullscreenEngine() {
-            document.getElementById('fullscreenWorkspace').style.display = 'none';
-        }
-
-        function viewBatchSummary() {
-            const selected = globalFilesArray.filter(f => f.selected);
-            alert(`
-BATCH SUMMARY
-─────────────────
-Selected Files: ${selected.length}
-Total Copies: ${selected.reduce((s, f) => s + f.qty, 0)}
-Total Area: ${(selected.reduce((s, f) => s + (f.size.width * f.size.height * f.qty), 0) / 10000).toFixed(2)} m²
-
-Material: ${document.getElementById('materialType').value.toUpperCase()}
-Roll Width: ${document.getElementById('rollSize').value}cm
-Gap Size: ${document.getElementById('gapSize').value}cm
-            `);
-        }
-
-        function toggleViewMode() {
-            const grid = document.getElementById('fileGrid');
-            grid.style.gridTemplateColumns = grid.style.gridTemplateColumns === 'repeat(auto-fill, minmax(150px, 1fr))' 
-                ? 'repeat(auto-fill, minmax(220px, 1fr))' 
-                : 'repeat(auto-fill, minmax(150px, 1fr))';
-            addToHistory('View Mode Changed', '');
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
 
         // ========== INITIALIZATION ==========
-        window.onload = function() {
-            updateRollOptions();
-            const savedHistory = getFromLocalStorage('activityHistory');
-            if (savedHistory) activityHistory = savedHistory;
-            updateHistoryPanel();
-            
-            const savedShowStats = getFromLocalStorage('showStats');
-            if (savedShowStats) {
-                document.getElementById('showStatsToggle').checked = true;
-                document.getElementById('statsBar').style.display = 'flex';
-            }
-            
-            fetchSystemWorkspace();
-        };
+        window.addEventListener('load', () => {
+            initCanvas();
+            loadAssets();
+            setTool('select');
+
+            document.addEventListener('click', (e) => {
+                if (e.target !== document.getElementById('contextMenu') && 
+                    !document.getElementById('contextMenu').contains(e.target)) {
+                    document.getElementById('contextMenu').style.display = 'none';
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                initCanvas();
+            });
+        });
     </script>
 </body>
 </html>
