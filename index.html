@@ -25,11 +25,11 @@
         .brand span { color: var(--accent-gold); }
         .brand i { font-size: 28px; }
 
-        .server-status { font-size: 11px; font-weight: 700; background: rgba(16, 185, 129, 0.1); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; display: flex; align-items: center; gap:8px; }
+        .server-status { font-size: 11px; font-weight: 700; background: rgba(16, 185, 129, 0.1); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; }
         .server-status.offline { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
 
         .top-actions { display: flex; gap: 15px; align-items: center; }
-        .btn-icon { background: transparent; border: 1px solid var(--border); color: var(--text-light); width: 45px; height: 45px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-icon { background: transparent; border: 1px solid var(--border); color: var(--text-light); width: 45px; height: 45px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .btn-icon:hover { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(212, 175, 55, 0.1); }
 
         /* Main Container */
@@ -50,7 +50,7 @@
         .asset-name { font-weight: 700; color: var(--text-light); }
         .asset-size { color: #a1a1aa; margin-top: 2px; }
         .asset-qty { display: flex; align-items: center; gap: 5px; margin-top: 5px; }
-        .asset-qty input { width: 40px; height: 24px; background: #1a1a1a; border: 1px solid var(--border); border-radius: 4px; color: var(--text-light); text-align: center; font-size: 11px; padding: 2px; }
+        .asset-qty input { width: 40px; height: 24px; background: #1a1a1a; border: 1px solid var(--border); border-radius: 4px; color: var(--text-light); text-align: center; font-size: 11px; padding: 0; }
 
         /* Center Canvas Area */
         .canvas-area { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-dark); }
@@ -66,8 +66,9 @@
         .tool-btn.active { background: var(--accent-gold); color: #000; border-color: var(--accent-gold); }
 
         /* Nesting Canvas */
-        .nesting-canvas-wrapper { flex: 1; overflow: auto; padding: 20px; display: flex; justify-content: center; align-items: flex-start; background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%); }
-        #nestingCanvas { background: #ffffff; box-shadow: 0 20px 60px rgba(0,0,0,0.5); cursor: crosshair; border-radius: 8px; }
+        .nesting-canvas-wrapper { flex: 1; overflow: auto; padding: 20px; display: flex; justify-content: center; align-items: flex-start; background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%); position: relative; }
+        #nestingCanvas { background: #ffffff; box-shadow: 0 20px 60px rgba(0,0,0,0.5); cursor: grab; border-radius: 8px; }
+        #nestingCanvas:active { cursor: grabbing; }
 
         /* Right Sidebar - Properties */
         .properties-panel { width: 300px; background-color: var(--bg-panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
@@ -89,7 +90,7 @@
 
         /* Toast Notifications */
         .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10001; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: var(--bg-panel); border: 1px solid var(--border); border-left: 4px solid var(--accent-gold); padding: 16px; border-radius: 8px; min-width: 300px; display: flex; align-items: center; gap: 12px; }
+        .toast { background: var(--bg-panel); border: 1px solid var(--border); border-left: 4px solid var(--accent-gold); padding: 16px; border-radius: 8px; min-width: 300px; display: flex; align-items: center; gap: 12px; animation: slideIn 0.3s ease; }
         .toast.success { border-left-color: var(--success); }
         .toast.error { border-left-color: var(--danger); }
         .toast.warning { border-left-color: var(--warning); }
@@ -113,6 +114,8 @@
         .context-menu-item { padding: 12px 20px; cursor: pointer; font-size: 12px; border-bottom: 1px solid var(--border); transition: 0.2s; }
         .context-menu-item:hover { background: rgba(212, 175, 55, 0.1); color: var(--accent-gold); }
         .context-menu-item:last-child { border-bottom: none; }
+
+        .drag-hint { position: absolute; top: 10px; left: 10px; font-size: 11px; color: #a1a1aa; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 4px; z-index: 100; pointer-events: none; }
 
         @media (max-width: 1200px) {
             .assets-panel, .properties-panel { width: 250px; }
@@ -173,6 +176,7 @@
 
             <div class="nesting-canvas-wrapper">
                 <canvas id="nestingCanvas"></canvas>
+                <div class="drag-hint">💡 Click + Drag items to reposition | Right-click to delete</div>
             </div>
         </div>
 
@@ -257,13 +261,17 @@
     </div>
 
     <script>
-        const API_URL = 'https://wubet-print-api.onrender.com/api'; // change to your backend if needed
+        const API_URL = 'https://wubet-print-api.onrender.com/api';
 
         let canvas = document.getElementById('nestingCanvas');
         let ctx = canvas.getContext('2d');
         let nestingItems = [];
         let allAssets = [];
         let selectedItem = null;
+        let draggedItem = null;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+        let pixelsPerCm = 1;
 
         const PRICING_RATES = { banner: 350, sticker: 450, canvas: 550 };
 
@@ -304,7 +312,6 @@
                 
                 allAssets = await response.json();
 
-                // Normalize items (in case API returns url or path)
                 const apiBase = API_URL.replace(/\/api\/?$/, '');
                 allAssets = allAssets.map((a, i) => ({
                     id: a.id ?? i,
@@ -361,71 +368,58 @@
         }
 
         // ========== RENDER HELPER ==========
-        function renderLayoutToContext(renderCtx, targetWidthCm, targetLengthCm, items, pixelsPerCm) {
-            const wPx = Math.ceil(targetWidthCm * pixelsPerCm);
-            const hPx = Math.ceil(targetLengthCm * pixelsPerCm);
+        function renderLayoutToContext(renderCtx, targetWidthCm, targetLengthCm, items, ppc) {
+            const wPx = Math.ceil(targetWidthCm * ppc);
+            const hPx = Math.ceil(targetLengthCm * ppc);
 
-            // clear
             renderCtx.clearRect(0, 0, wPx, hPx);
-            // white background
             renderCtx.fillStyle = '#ffffff';
             renderCtx.fillRect(0, 0, wPx, hPx);
 
-            // grid (optional)
+            // Grid
             renderCtx.strokeStyle = 'rgba(0,0,0,0.06)';
             renderCtx.lineWidth = 1;
             const gridCm = 5;
-            for (let x = 0; x <= wPx; x += gridCm * pixelsPerCm) {
+            for (let x = 0; x <= wPx; x += gridCm * ppc) {
                 renderCtx.beginPath();
                 renderCtx.moveTo(x, 0);
                 renderCtx.lineTo(x, hPx);
                 renderCtx.stroke();
             }
-            for (let y = 0; y <= hPx; y += gridCm * pixelsPerCm) {
+            for (let y = 0; y <= hPx; y += gridCm * ppc) {
                 renderCtx.beginPath();
                 renderCtx.moveTo(0, y);
                 renderCtx.lineTo(wPx, y);
                 renderCtx.stroke();
             }
 
-            // draw items
-            items.forEach(item => {
-                const x = Math.round(item.x * pixelsPerCm);
-                const y = Math.round(item.y * pixelsPerCm);
-                const w = Math.round(item.width * pixelsPerCm);
-                const h = Math.round(item.height * pixelsPerCm);
+            // Draw items
+            items.forEach((item, idx) => {
+                const x = Math.round(item.x * ppc);
+                const y = Math.round(item.y * ppc);
+                const w = Math.round(item.width * ppc);
+                const h = Math.round(item.height * ppc);
 
                 renderCtx.save();
                 if (item.rotation && item.rotation !== 0) {
                     renderCtx.translate(x + w / 2, y + h / 2);
                     renderCtx.rotate((item.rotation * Math.PI) / 180);
                     renderCtx.translate(-w / 2, -h / 2);
-                    renderCtx.fillStyle = 'rgba(37, 99, 235, 0.15)';
-                    renderCtx.fillRect(0, 0, w, h);
-                    renderCtx.strokeStyle = '#2563eb';
-                    renderCtx.lineWidth = 2;
-                    renderCtx.strokeRect(0, 0, w, h);
-
-                    renderCtx.font = 'bold 12px Arial';
-                    renderCtx.fillStyle = '#000';
-                    renderCtx.textAlign = 'center';
-                    renderCtx.fillText(item.name.substring(0, 18), w / 2, h / 2 - 5);
-                    renderCtx.font = '10px Arial';
-                    renderCtx.fillText(`${item.width}×${item.height}cm`, w / 2, h / 2 + 12);
-                } else {
-                    renderCtx.fillStyle = 'rgba(37, 99, 235, 0.15)';
-                    renderCtx.fillRect(x, y, w, h);
-                    renderCtx.strokeStyle = '#2563eb';
-                    renderCtx.lineWidth = 2;
-                    renderCtx.strokeRect(x, y, w, h);
-
-                    renderCtx.font = 'bold 12px Arial';
-                    renderCtx.fillStyle = '#000';
-                    renderCtx.textAlign = 'center';
-                    renderCtx.fillText(item.name.substring(0, 18), x + w / 2, y + h / 2 - 5);
-                    renderCtx.font = '10px Arial';
-                    renderCtx.fillText(`${item.width}×${item.height}cm`, x + w / 2, y + h / 2 + 12);
                 }
+                
+                renderCtx.fillStyle = item.id === selectedItem?.id ? 'rgba(212, 175, 55, 0.3)' : 'rgba(37, 99, 235, 0.15)';
+                renderCtx.fillRect(0, 0, w, h);
+                renderCtx.strokeStyle = item.id === selectedItem?.id ? '#d4af37' : '#2563eb';
+                renderCtx.lineWidth = item.id === selectedItem?.id ? 3 : 2;
+                renderCtx.strokeRect(0, 0, w, h);
+
+                renderCtx.font = 'bold 12px Arial';
+                renderCtx.fillStyle = '#000';
+                renderCtx.textAlign = 'center';
+                renderCtx.fillText(item.name.substring(0, 18), w / 2, h / 2 - 5);
+                renderCtx.font = '10px Arial';
+                renderCtx.fillText(`${item.width}×${item.height}cm`, w / 2, h / 2 + 12);
+
                 renderCtx.restore();
             });
         }
@@ -438,24 +432,22 @@
 
             const rollWidth = parseInt(document.getElementById('rollWidth').value);
             let totalLength = 0;
-            if (nestingItems.length === 0) totalLength = 100; // default preview length
+            if (nestingItems.length === 0) totalLength = 100;
             else {
                 const maxY = Math.max(...nestingItems.map(it => it.y + it.height));
-                totalLength = Math.max(maxY + 20, 100); // some margin
+                totalLength = Math.max(maxY + 20, 100);
             }
 
-            // compute pixelsPerCm for preview so whole roll width fits previewW
-            const pixelsPerCmPreview = previewW / rollWidth;
+            pixelsPerCm = previewW / rollWidth;
 
-            // resize canvas for preview
             canvas.width = previewW;
-            canvas.height = Math.min(previewH, Math.ceil(totalLength * pixelsPerCmPreview));
+            canvas.height = Math.min(previewH, Math.ceil(totalLength * pixelsPerCm));
             const previewCtx = canvas.getContext('2d');
 
-            renderLayoutToContext(previewCtx, rollWidth, totalLength, nestingItems, pixelsPerCmPreview);
+            renderLayoutToContext(previewCtx, rollWidth, totalLength, nestingItems, pixelsPerCm);
         }
 
-        // ========== NESTING ALGORITHM ==========
+        // ========== IMPROVED NESTING ALGORITHM ==========
         function generateNesting() {
             if (nestingItems.length === 0) {
                 showToast('Add items first by clicking on assets', 'warning');
@@ -467,58 +459,94 @@
             const allowRotation = document.getElementById('allowRotation').checked;
 
             let itemsToNest = nestingItems.map(i => ({ ...i }));
-
             itemsToNest.sort((a, b) => (b.width * b.height) - (a.width * a.height));
 
             let nestedItems = [];
-            let currentY = 0;
-            let currentRowHeight = 0;
-            let currentRowX = 0;
+            let rows = [];
+            let currentRow = { items: [], y: 0, height: 0, width: 0 };
 
             itemsToNest.forEach((item) => {
                 let itemWidth = item.width;
                 let itemHeight = item.height;
                 let rotated = false;
 
-                if (currentRowX + itemWidth + gap <= rollWidth) {
-                    // fits
-                } else if (allowRotation && currentRowX + itemHeight + gap <= rollWidth && itemHeight !== itemWidth) {
-                    [itemWidth, itemHeight] = [itemHeight, itemWidth];
-                    rotated = true;
-                } else {
-                    // next row
-                    currentY += currentRowHeight + gap;
-                    currentRowX = 0;
-                    currentRowHeight = 0;
-                    if (currentRowX + itemWidth + gap > rollWidth && allowRotation && itemHeight !== itemWidth && itemHeight <= rollWidth) {
-                        [itemWidth, itemHeight] = [itemHeight, itemWidth];
-                        rotated = true;
+                // Try to fit in current row
+                if (currentRow.width + itemWidth + gap <= rollWidth) {
+                    currentRow.items.push({
+                        x: currentRow.width,
+                        y: currentRow.y,
+                        width: itemWidth,
+                        height: itemHeight,
+                        rotation: 0,
+                        ...item
+                    });
+                    currentRow.width += itemWidth + gap;
+                    currentRow.height = Math.max(currentRow.height, itemHeight);
+                } 
+                // Try rotated
+                else if (allowRotation && currentRow.width + itemHeight + gap <= rollWidth && itemHeight !== itemWidth) {
+                    currentRow.items.push({
+                        x: currentRow.width,
+                        y: currentRow.y,
+                        width: itemHeight,
+                        height: itemWidth,
+                        rotation: 90,
+                        ...item
+                    });
+                    currentRow.width += itemHeight + gap;
+                    currentRow.height = Math.max(currentRow.height, itemWidth);
+                }
+                // New row
+                else {
+                    if (currentRow.items.length > 0) {
+                        rows.push(currentRow);
+                        currentRow = { items: [], y: rows.reduce((sum, r) => sum + r.height + gap, 0), height: 0, width: 0 };
+                    }
+
+                    // Check if item fits alone
+                    if (itemWidth <= rollWidth) {
+                        currentRow.items.push({
+                            x: 0,
+                            y: currentRow.y,
+                            width: itemWidth,
+                            height: itemHeight,
+                            rotation: 0,
+                            ...item
+                        });
+                        currentRow.width = itemWidth + gap;
+                        currentRow.height = itemHeight;
+                    } else if (allowRotation && itemHeight <= rollWidth && itemHeight !== itemWidth) {
+                        currentRow.items.push({
+                            x: 0,
+                            y: currentRow.y,
+                            width: itemHeight,
+                            height: itemWidth,
+                            rotation: 90,
+                            ...item
+                        });
+                        currentRow.width = itemHeight + gap;
+                        currentRow.height = itemWidth;
                     }
                 }
-
-                nestedItems.push({
-                    ...item,
-                    x: currentRowX,
-                    y: currentY,
-                    width: itemWidth,
-                    height: itemHeight,
-                    rotation: rotated ? 90 : 0
-                });
-
-                currentRowX += itemWidth + gap;
-                currentRowHeight = Math.max(currentRowHeight, itemHeight);
             });
 
-            const totalLength = currentY + currentRowHeight;
-            const totalArea = (rollWidth * totalLength) / 10000; // m²
+            if (currentRow.items.length > 0) {
+                rows.push(currentRow);
+            }
+
+            // Flatten rows to items
+            nestedItems = rows.flatMap(r => r.items);
+
+            const totalLength = rows.reduce((sum, r) => sum + r.height + gap, 0) || 100;
+            const totalArea = (rollWidth * totalLength) / 10000;
             const usedArea = nestedItems.reduce((sum, it) => sum + (it.width * it.height), 0) / 10000;
             const efficiency = totalArea > 0 ? ((usedArea / totalArea) * 100).toFixed(2) : '0.00';
             const material = document.getElementById('materialType').value;
             const totalCost = (totalArea * PRICING_RATES[material]).toFixed(0);
 
             nestingItems = nestedItems;
+            selectedItem = null;
 
-            // Update stats
             document.getElementById('statItems').textContent = nestedItems.length;
             document.getElementById('statArea').textContent = totalArea.toFixed(2) + ' m²';
             document.getElementById('statEfficiency').textContent = efficiency + '%';
@@ -552,7 +580,115 @@
             showToast(`Added ${qty}x ${asset.name}`, 'success');
         }
 
-        // ========== EXPORT improvement: offscreen canvas ==========
+        // ========== DRAG AND DROP ==========
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const canvasX = (e.clientX - rect.left) / pixelsPerCm;
+            const canvasY = (e.clientY - rect.top) / pixelsPerCm;
+
+            // Find item under cursor
+            for (let i = nestingItems.length - 1; i >= 0; i--) {
+                const item = nestingItems[i];
+                if (canvasX >= item.x && canvasX <= item.x + item.width &&
+                    canvasY >= item.y && canvasY <= item.y + item.height) {
+                    selectedItem = item;
+                    draggedItem = item;
+                    dragOffsetX = canvasX - item.x;
+                    dragOffsetY = canvasY - item.y;
+                    redrawCanvas();
+                    return;
+                }
+            }
+            selectedItem = null;
+            redrawCanvas();
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!draggedItem) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const canvasX = (e.clientX - rect.left) / pixelsPerCm;
+            const canvasY = (e.clientY - rect.top) / pixelsPerCm;
+
+            const rollWidth = parseInt(document.getElementById('rollWidth').value);
+
+            draggedItem.x = Math.max(0, Math.min(canvasX - dragOffsetX, rollWidth - draggedItem.width));
+            draggedItem.y = Math.max(0, canvasY - dragOffsetY);
+
+            redrawCanvas();
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            draggedItem = null;
+            updateStats();
+        });
+
+        canvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const canvasX = (e.clientX - rect.left) / pixelsPerCm;
+            const canvasY = (e.clientY - rect.top) / pixelsPerCm;
+
+            for (let i = nestingItems.length - 1; i >= 0; i--) {
+                const item = nestingItems[i];
+                if (canvasX >= item.x && canvasX <= item.x + item.width &&
+                    canvasY >= item.y && canvasY <= item.y + item.height) {
+                    selectedItem = item;
+                    const menu = document.getElementById('contextMenu');
+                    menu.style.left = e.clientX + 'px';
+                    menu.style.top = e.clientY + 'px';
+                    menu.style.display = 'block';
+                    return;
+                }
+            }
+        });
+
+        document.addEventListener('click', () => {
+            document.getElementById('contextMenu').style.display = 'none';
+        });
+
+        function deleteItem() {
+            if (selectedItem) {
+                nestingItems = nestingItems.filter(i => i.id !== selectedItem.id);
+                selectedItem = null;
+                redrawCanvas();
+                updateStats();
+                showToast('Item deleted', 'success');
+            }
+        }
+
+        function duplicateItem() {
+            if (selectedItem) {
+                const newItem = { ...selectedItem, id: `item-${Date.now()}-${Math.random().toString(36).substr(2,5)}`, x: selectedItem.x + 5, y: selectedItem.y + 5 };
+                nestingItems.push(newItem);
+                selectedItem = newItem;
+                redrawCanvas();
+                updateStats();
+                showToast('Item duplicated', 'success');
+            }
+        }
+
+        function updateStats() {
+            const rollWidth = parseInt(document.getElementById('rollWidth').value);
+            let totalLength = 0;
+            if (nestingItems.length > 0) {
+                const maxY = Math.max(...nestingItems.map(it => it.y + it.height));
+                totalLength = Math.max(maxY + 10, 10);
+            }
+            const totalArea = (rollWidth * totalLength) / 10000;
+            const usedArea = nestingItems.reduce((sum, it) => sum + (it.width * it.height), 0) / 10000;
+            const efficiency = totalArea > 0 ? ((usedArea / totalArea) * 100).toFixed(2) : '0.00';
+            const material = document.getElementById('materialType').value;
+            const totalCost = (totalArea * PRICING_RATES[material]).toFixed(0);
+
+            document.getElementById('statItems').textContent = nestingItems.length;
+            document.getElementById('statArea').textContent = totalArea.toFixed(2) + ' m²';
+            document.getElementById('statEfficiency').textContent = efficiency + '%';
+            document.getElementById('statCost').textContent = totalCost + ' ETB';
+            document.getElementById('statLength').textContent = totalLength + ' cm';
+        }
+
+        // ========== EXPORT ==========
         function confirmExport() {
             const format = document.getElementById('exportFormat').value;
             
@@ -564,9 +700,9 @@
 
             const rollWidth = parseInt(document.getElementById('rollWidth').value);
             const maxY = Math.max(...nestingItems.map(it => it.y + it.height));
-            const totalLength = Math.max(maxY + 10, 10); // cm
+            const totalLength = Math.max(maxY + 10, 10);
 
-            const ppcm = 10; // pixels per cm for export (adjust for higher res)
+            const ppcm = 10;
             const exportW = Math.ceil(rollWidth * ppcm);
             const exportH = Math.ceil(totalLength * ppcm);
 
@@ -602,15 +738,13 @@
                 });
                 pdf.addImage(imgData, 'PNG', 0, 0, exportW, exportH);
                 pdf.save('nesting-' + new Date().toISOString().split('T')[0] + '.pdf');
-            } else if (format === 'svg') {
-                showToast('SVG export coming soon', 'warning');
             }
 
             closeModal('exportModal');
             showToast('Exported as ' + format.toUpperCase(), 'success');
         }
 
-        // ========== FILE OPERATIONS & UI helpers ==========
+        // ========== UI HELPERS ==========
         function saveProject() {
             const projectName = prompt('Project name:', 'Untitled-' + new Date().getTime());
             if (!projectName) return;
@@ -663,7 +797,7 @@
         }
 
         function updateMaterialCost() {
-            generateNesting();
+            updateStats();
         }
 
         function closeModal(modalId) {
