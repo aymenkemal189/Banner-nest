@@ -40,20 +40,17 @@
         .panel-header { padding: 20px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.3); }
         .panel-title { font-size: 13px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 15px; font-weight: 900; letter-spacing: 1.5px; display: flex; align-items: center; gap: 8px; }
 
-        .folder-list { display: flex; flex-direction: column; gap: 8px; padding: 0 15px; margin-top: 10px; }
-        .folder-item { padding: 12px 15px; background: #1a1a1a; border-radius: 8px; cursor: pointer; font-size: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent; transition: 0.2s; }
-        .folder-item:hover { border-color: var(--border); background: #2a2a2a; }
-        .folder-item.active { background: rgba(212, 175, 55, 0.15); border-color: var(--accent-gold); color: var(--accent-gold); }
-
         .assets-content { flex: 1; overflow-y: auto; padding: 15px; }
         .asset-item { padding: 12px; background: #2a2a2a; border-radius: 8px; cursor: pointer; border: 1px solid transparent; margin-bottom: 10px; transition: 0.2s; display: flex; gap: 10px; }
         .asset-item:hover { border-color: var(--accent-gold); }
         .asset-item.selected { border-color: var(--accent-gold); background: rgba(212, 175, 55, 0.1); }
-        .asset-thumb { width: 60px; height: 60px; background: #1a1a1a; border-radius: 6px; overflow: hidden; }
+        .asset-thumb { width: 60px; height: 60px; background: #1a1a1a; border-radius: 6px; overflow: hidden; flex-shrink: 0; }
         .asset-thumb img { width: 100%; height: 100%; object-fit: cover; }
         .asset-info { flex: 1; font-size: 11px; }
         .asset-name { font-weight: 700; color: var(--text-light); }
         .asset-size { color: #a1a1aa; margin-top: 2px; }
+        .asset-qty { display: flex; align-items: center; gap: 5px; margin-top: 5px; }
+        .asset-qty input { width: 40px; height: 24px; background: #1a1a1a; border: 1px solid var(--border); border-radius: 4px; color: var(--text-light); text-align: center; font-size: 11px; padding: 2px; }
 
         /* Center Canvas Area */
         .canvas-area { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-dark); }
@@ -117,7 +114,6 @@
         .context-menu-item:hover { background: rgba(212, 175, 55, 0.1); color: var(--accent-gold); }
         .context-menu-item:last-child { border-bottom: none; }
 
-        /* ========== MOBILE RESPONSIVE ========== */
         @media (max-width: 1200px) {
             .assets-panel, .properties-panel { width: 250px; }
         }
@@ -168,13 +164,11 @@
                     <input type="number" id="gapSize" value="2" min="0" max="10">
                 </div>
                 <div class="tool-group">
-                    <label>Rotation:</label>
+                    <label>Auto Rotation:</label>
                     <input type="checkbox" id="allowRotation" checked>
                 </div>
-                <button class="tool-btn" onclick="generateNesting()"><i class="fa-solid fa-bolt"></i> Generate Nesting</button>
-                <button class="tool-btn" id="toolSelect" onclick="setTool('select')" title="Select"><i class="fa-solid fa-arrow-pointer"></i></button>
-                <button class="tool-btn" id="toolRotate" onclick="setTool('rotate')" title="Rotate"><i class="fa-solid fa-rotate"></i></button>
-                <button class="tool-btn" id="toolDelete" onclick="setTool('delete')" title="Delete"><i class="fa-solid fa-trash"></i></button>
+                <button class="tool-btn" onclick="generateNesting()" style="background: var(--accent-gold); color: #000;"><i class="fa-solid fa-bolt"></i> Auto Nest</button>
+                <button class="tool-btn" onclick="clearCanvas()"><i class="fa-solid fa-trash"></i> Clear</button>
             </div>
 
             <div class="nesting-canvas-wrapper">
@@ -185,7 +179,7 @@
         <!-- Right Sidebar - Properties -->
         <div class="properties-panel">
             <div class="prop-section">
-                <div class="prop-title">Project Stats</div>
+                <div class="prop-title">📊 Layout Stats</div>
                 <div class="prop-item">
                     <div class="prop-label">Total Items</div>
                     <div class="prop-display" id="statItems">0</div>
@@ -199,33 +193,24 @@
                     <div class="prop-display" id="statEfficiency">0%</div>
                 </div>
                 <div class="prop-item">
-                    <div class="prop-label">Est. Cost</div>
-                    <div class="prop-display" id="statCost">0 ETB</div>
+                    <div class="prop-label">Est. Cost (ETB)</div>
+                    <div class="prop-display" id="statCost">0</div>
+                </div>
+                <div class="prop-item">
+                    <div class="prop-label">Total Length</div>
+                    <div class="prop-display" id="statLength">0 cm</div>
                 </div>
             </div>
 
             <div class="prop-section">
-                <div class="prop-title">Selected Item</div>
+                <div class="prop-title">⚙️ Settings</div>
                 <div class="prop-item">
-                    <div class="prop-label">Name</div>
-                    <div class="prop-input" id="selectedItemName">None</div>
-                </div>
-                <div class="prop-item">
-                    <div class="prop-label">Dimensions</div>
-                    <div class="prop-input" id="selectedItemDim">--</div>
-                </div>
-                <div class="prop-item">
-                    <div class="prop-label">Rotation</div>
-                    <input type="range" class="slider" id="rotationSlider" min="0" max="360" value="0">
-                    <div class="prop-display" id="rotationValue">0°</div>
-                </div>
-                <div class="prop-item">
-                    <div class="prop-label">Position X</div>
-                    <div class="prop-input" id="itemPosX">--</div>
-                </div>
-                <div class="prop-item">
-                    <div class="prop-label">Position Y</div>
-                    <div class="prop-input" id="itemPosY">--</div>
+                    <label class="prop-label">Material Type:</label>
+                    <select id="materialType" class="prop-input" onchange="updateMaterialCost()">
+                        <option value="banner">Banner (350 ETB)</option>
+                        <option value="sticker">Sticker (450 ETB)</option>
+                        <option value="canvas">Canvas (550 ETB)</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -237,7 +222,7 @@
         <div class="status-item"><i class="fa-solid fa-ruler"></i> Length: <span class="status-value" id="statusLength">0 cm</span></div>
         <div class="status-item"><i class="fa-solid fa-chart-pie"></i> Usage: <span class="status-value" id="statusUsage">0%</span></div>
         <div class="status-item"><i class="fa-solid fa-leaf"></i> Zoom: <span class="status-value" id="zoomLevel">100%</span></div>
-        <div class="status-item" id="cursorPos" style="margin-left: auto;">X: 0 Y: 0</div>
+        <div class="status-item" id="cursorPos" style="margin-left: auto;">Ready</div>
     </div>
 
     <!-- Toast Container -->
@@ -246,20 +231,16 @@
     <!-- Export Modal -->
     <div class="modal" id="exportModal">
         <div class="modal-content">
-            <div class="modal-header">Export Nesting</div>
+            <div class="modal-header">📥 Export Nesting Layout</div>
             <div class="modal-body">
                 <div class="prop-item">
-                    <label class="prop-label">Export Format:</label>
+                    <label class="prop-label">Format:</label>
                     <select id="exportFormat" class="prop-input">
                         <option value="png">High-Res PNG (2400 DPI)</option>
                         <option value="pdf">Production PDF</option>
                         <option value="svg">Vector SVG</option>
                         <option value="json">Project JSON</option>
                     </select>
-                </div>
-                <div class="prop-item">
-                    <label class="prop-label">Include Labels</label>
-                    <input type="checkbox" id="exportLabels" checked>
                 </div>
             </div>
             <div class="modal-footer">
@@ -271,11 +252,8 @@
 
     <!-- Context Menu -->
     <div class="context-menu" id="contextMenu">
-        <div class="context-menu-item" onclick="duplicateItem()">Duplicate</div>
-        <div class="context-menu-item" onclick="rotateItem()">Rotate 90°</div>
-        <div class="context-menu-item" onclick="deleteItem()">Delete</div>
-        <div class="context-menu-item" onclick="sendToBack()">Send to Back</div>
-        <div class="context-menu-item" onclick="bringToFront()">Bring to Front</div>
+        <div class="context-menu-item" onclick="deleteItem()">🗑️ Delete Item</div>
+        <div class="context-menu-item" onclick="duplicateItem()">📋 Duplicate</div>
     </div>
 
     <script>
@@ -283,12 +261,12 @@
         
         let canvas = document.getElementById('nestingCanvas');
         let ctx = canvas.getContext('2d');
-        let currentTool = 'select';
-        let selectedItem = null;
         let nestingItems = [];
         let allAssets = [];
+        let selectedItem = null;
         let zoomLevel = 1;
         let panX = 0, panY = 0;
+        let draggedItem = null;
 
         const PRICING_RATES = { banner: 350, sticker: 450, canvas: 550 };
 
@@ -320,13 +298,22 @@
         // ========== ASSET LOADING ==========
         async function loadAssets() {
             try {
+                document.getElementById('serverStatus').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
                 const response = await fetch(`${API_URL}/files`);
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
                 allAssets = await response.json();
                 renderAssetsPanel();
-                showToast('Assets loaded successfully', 'success');
+                document.getElementById('serverStatus').innerHTML = '<i class="fa-solid fa-satellite-dish"></i> SERVER READY';
+                showToast(`Loaded ${allAssets.length} assets`, 'success');
             } catch (error) {
+                document.getElementById('serverStatus').classList.add('offline');
+                document.getElementById('serverStatus').innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i> OFFLINE';
+                console.error('Load error:', error);
                 showToast('Failed to load assets: ' + error.message, 'error');
-                console.error(error);
             }
         }
 
@@ -334,82 +321,140 @@
             const container = document.getElementById('assetsContainer');
             container.innerHTML = '';
             
+            if (allAssets.length === 0) {
+                container.innerHTML = '<p style="color: #a1a1aa; text-align: center; padding: 20px;">No assets found</p>';
+                return;
+            }
+
             allAssets.forEach(asset => {
                 const div = document.createElement('div');
                 div.className = 'asset-item';
+                const thumbSrc = asset.path || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect fill=%22%23333%22 width=%2260%22 height=%2260%22/%3E%3C/svg%3E';
+                
                 div.innerHTML = `
                     <div class="asset-thumb">
-                        <img src="${asset.path}" alt="${asset.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect fill=%22%23333%22 width=%2260%22 height=%2260%22/%3E%3Ctext x=%2230%22 y=%2230%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2212%22%3E?%3C/text%3E%3C/svg%3E'">
+                        <img src="${thumbSrc}" alt="${asset.name}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect fill=%22%23333%22 width=%2260%22 height=%2260%22/%3E%3C/svg%3E'">
                     </div>
                     <div class="asset-info">
-                        <div class="asset-name" title="${asset.name}">${asset.name.substring(0, 20)}</div>
+                        <div class="asset-name">${asset.name.substring(0, 20)}</div>
                         <div class="asset-size">${asset.size.width} × ${asset.size.height}cm</div>
+                        <div class="asset-qty">
+                            <label>Qty:</label>
+                            <input type="number" value="1" min="1" max="100" data-asset-id="${asset.id}">
+                        </div>
                     </div>
                 `;
-                div.draggable = true;
-                div.ondragstart = (e) => {
-                    e.dataTransfer.effectAllowed = 'copy';
-                    e.dataTransfer.setData('assetId', asset.id);
-                };
-                div.onclick = () => addItemToNesting(asset);
+                
+                div.onclick = () => addItemToNesting(asset, div.querySelector('input').value);
                 container.appendChild(div);
             });
         }
 
-        // ========== NESTING ENGINE ==========
-        async function generateNesting() {
-            const rollWidth = parseInt(document.getElementById('rollWidth').value);
-            const gapSize = parseInt(document.getElementById('gapSize').value);
-            const allowRotation = document.getElementById('allowRotation').checked;
-
+        // ========== ADVANCED NESTING ENGINE ==========
+        function generateNesting() {
             if (nestingItems.length === 0) {
-                showToast('Add items to nesting first', 'warning');
+                showToast('Add items first by clicking on assets', 'warning');
                 return;
             }
 
-            try {
-                const response = await fetch(`${API_URL}/nesting/generate`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        items: nestingItems,
-                        rollWidth: rollWidth,
-                        config: { gap: gapSize, allowRotation }
-                    })
-                });
+            const rollWidth = parseInt(document.getElementById('rollWidth').value);
+            const gap = parseInt(document.getElementById('gapSize').value) || 0;
+            const allowRotation = document.getElementById('allowRotation').checked;
 
-                const result = await response.json();
-                
-                if (result.error) {
-                    showToast('Error: ' + result.error, 'error');
-                    return;
+            // Process items for nesting
+            let itemsToNest = [];
+            nestingItems.forEach(item => {
+                itemsToNest.push({ ...item });
+            });
+
+            // Sort by area (First Fit Decreasing)
+            itemsToNest.sort((a, b) => (b.width * b.height) - (a.width * a.height));
+
+            let nestedItems = [];
+            let currentY = 0;
+            let currentRowHeight = 0;
+            let currentRowX = 0;
+
+            itemsToNest.forEach((item, idx) => {
+                let itemWidth = item.width;
+                let itemHeight = item.height;
+                let rotated = false;
+
+                // Try to fit in current row
+                if (currentRowX + itemWidth + gap <= rollWidth) {
+                    // Fits normally
+                } else if (allowRotation && currentRowX + itemHeight + gap <= rollWidth && itemHeight !== itemWidth) {
+                    // Try rotated
+                    if (itemHeight < rollWidth) {
+                        [itemWidth, itemHeight] = [itemHeight, itemWidth];
+                        rotated = true;
+                    }
+                } else {
+                    // Move to next row
+                    currentY += currentRowHeight + gap;
+                    currentRowX = 0;
+                    currentRowHeight = 0;
                 }
 
-                nestingItems = result.items;
-                updateStats(result);
-                redrawCanvas();
-                showToast('Nesting generated successfully!', 'success');
-            } catch (error) {
-                showToast('Failed to generate nesting: ' + error.message, 'error');
-            }
+                // Add item to nesting
+                nestedItems.push({
+                    ...item,
+                    x: currentRowX,
+                    y: currentY,
+                    width: itemWidth,
+                    height: itemHeight,
+                    rotation: rotated ? 90 : 0
+                });
+
+                currentRowX += itemWidth + gap;
+                currentRowHeight = Math.max(currentRowHeight, itemHeight);
+            });
+
+            // Calculate statistics
+            const totalLength = currentY + currentRowHeight;
+            const totalArea = (rollWidth * totalLength) / 10000; // m²
+            const usedArea = nestedItems.reduce((sum, item) => sum + (item.width * item.height), 0) / 10000;
+            const efficiency = ((usedArea / totalArea) * 100).toFixed(2);
+            const material = document.getElementById('materialType').value;
+            const totalCost = (totalArea * PRICING_RATES[material]).toFixed(0);
+
+            nestingItems = nestedItems;
+            
+            // Update stats
+            document.getElementById('statItems').textContent = nestedItems.length;
+            document.getElementById('statArea').textContent = totalArea.toFixed(2) + ' m²';
+            document.getElementById('statEfficiency').textContent = efficiency + '%';
+            document.getElementById('statCost').textContent = totalCost + ' ETB';
+            document.getElementById('statLength').textContent = totalLength + ' cm';
+
+            document.getElementById('statusItems').textContent = nestedItems.length;
+            document.getElementById('statusLength').textContent = totalLength + ' cm';
+            document.getElementById('statusUsage').textContent = efficiency + '%';
+
+            redrawCanvas();
+            showToast(`✅ Nesting optimized! Efficiency: ${efficiency}%`, 'success');
         }
 
-        function addItemToNesting(asset) {
-            const item = {
-                id: `item-${Date.now()}`,
-                name: asset.name,
-                width: asset.size.width,
-                height: asset.size.height,
-                x: 10 + (nestingItems.length * 5),
-                y: 10 + (nestingItems.length * 5),
-                rotation: 0,
-                quantity: 1,
-                path: asset.path
-            };
+        function addItemToNesting(asset, quantity = 1) {
+            const qty = parseInt(quantity) || 1;
             
-            nestingItems.push(item);
+            for (let i = 0; i < qty; i++) {
+                const item = {
+                    id: `item-${Date.now()}-${i}`,
+                    name: asset.name,
+                    width: asset.size.width,
+                    height: asset.size.height,
+                    x: 10 + (nestingItems.length * 2),
+                    y: 10 + (nestingItems.length * 2),
+                    rotation: 0,
+                    path: asset.path
+                };
+                
+                nestingItems.push(item);
+            }
+            
             redrawCanvas();
-            showToast(`Added: ${asset.name}`, 'success');
+            showToast(`Added ${qty}x ${asset.name}`, 'success');
         }
 
         // ========== CANVAS DRAWING ==========
@@ -417,15 +462,12 @@
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Draw grid
             drawGrid();
             
-            // Draw items
             nestingItems.forEach((item, idx) => {
                 drawItem(item, item === selectedItem);
             });
 
-            // Draw ruler
             drawRuler();
         }
 
@@ -436,55 +478,45 @@
             const h = item.height * zoomLevel;
 
             ctx.save();
-            ctx.translate(x + w / 2, y + h / 2);
-            ctx.rotate((item.rotation * Math.PI) / 180);
+            
+            if (item.rotation !== 0) {
+                ctx.translate(x + w / 2, y + h / 2);
+                ctx.rotate((item.rotation * Math.PI) / 180);
+                ctx.translate(-(w / 2), -(h / 2));
+            }
 
-            // Draw item rectangle
-            ctx.fillStyle = isSelected ? 'rgba(212, 175, 55, 0.2)' : 'rgba(37, 99, 235, 0.1)';
+            // Draw item
+            ctx.fillStyle = isSelected ? 'rgba(212, 175, 55, 0.3)' : 'rgba(37, 99, 235, 0.15)';
             ctx.strokeStyle = isSelected ? '#d4af37' : '#2563eb';
-            ctx.lineWidth = isSelected ? 3 : 1;
-            ctx.fillRect(-w / 2, -h / 2, w, h);
-            ctx.strokeRect(-w / 2, -h / 2, w, h);
+            ctx.lineWidth = isSelected ? 3 : 2;
+            ctx.fillRect(x - (item.rotation ? w / 2 : 0), y - (item.rotation ? h / 2 : 0), w, h);
+            ctx.strokeRect(x - (item.rotation ? w / 2 : 0), y - (item.rotation ? h / 2 : 0), w, h);
 
             // Draw text
-            ctx.font = 'bold 12px Arial';
+            ctx.font = 'bold 11px Arial';
             ctx.fillStyle = '#000';
             ctx.textAlign = 'center';
-            ctx.fillText(item.name.substring(0, 15), 0, 0);
-
-            // Draw dimensions
-            ctx.font = '10px Arial';
-            ctx.fillStyle = '#666';
-            ctx.fillText(`${item.width}×${item.height}cm`, 0, 15);
+            ctx.fillText(item.name.substring(0, 12), x + w / 2, y + h / 2 - 5);
+            
+            ctx.font = '9px Arial';
+            ctx.fillText(`${item.width}×${item.height}cm`, x + w / 2, y + h / 2 + 8);
 
             ctx.restore();
 
-            // Draw handles if selected
+            // Draw selection box
             if (isSelected) {
-                drawHandles(x, y, w, h);
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.strokeRect(x - 5, y - 5, w + 10, h + 10);
+                ctx.setLineDash([]);
             }
         }
 
-        function drawHandles(x, y, w, h) {
-            const handleSize = 8;
-            const handles = [
-                [x, y], [x + w, y], [x + w, y + h], [x, y + h], // Corners
-                [x + w / 2, y], [x + w, y + h / 2] // Edges
-            ];
-
-            handles.forEach(([hx, hy]) => {
-                ctx.fillStyle = '#d4af37';
-                ctx.fillRect(hx - handleSize / 2, hy - handleSize / 2, handleSize, handleSize);
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(hx - handleSize / 2, hy - handleSize / 2, handleSize, handleSize);
-            });
-        }
-
         function drawGrid() {
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.03)';
             ctx.lineWidth = 1;
-            const gridSize = 50 * zoomLevel;
+            const gridSize = 50;
 
             for (let i = 0; i < canvas.width; i += gridSize) {
                 ctx.beginPath();
@@ -503,195 +535,113 @@
 
         function drawRuler() {
             ctx.fillStyle = '#000';
-            ctx.font = '10px Arial';
+            ctx.font = '9px Arial';
             ctx.textAlign = 'center';
 
-            // Horizontal ruler
-            for (let i = 0; i < canvas.width; i += 100 * zoomLevel) {
-                ctx.fillRect(i, 0, 1, 10);
-                ctx.fillText(Math.round(i / zoomLevel), i, 25);
+            for (let i = 0; i < canvas.width; i += 100) {
+                ctx.fillRect(i, 0, 1, 8);
+                ctx.fillText(i / 10, i, 15);
             }
         }
 
         // ========== CANVAS EVENTS ==========
-        canvas.addEventListener('mousedown', (e) => handleCanvasMouseDown(e));
-        canvas.addEventListener('mousemove', (e) => handleCanvasMouseMove(e));
-        canvas.addEventListener('mouseup', (e) => handleCanvasMouseUp(e));
-        canvas.addEventListener('contextmenu', (e) => handleCanvasContextMenu(e));
-        canvas.addEventListener('wheel', (e) => handleCanvasZoom(e));
-        canvas.addEventListener('drop', (e) => handleCanvasDrop(e));
-        canvas.addEventListener('dragover', (e) => e.preventDefault());
-
-        function handleCanvasMouseDown(e) {
+        canvas.addEventListener('mousedown', (e) => {
             const rect = canvas.getBoundingClientRect();
             const x = (e.clientX - rect.left - panX) / zoomLevel;
             const y = (e.clientY - rect.top - panY) / zoomLevel;
 
-            // Check if clicked on an item
-            const clicked = nestingItems.find(item => {
-                return x >= item.x && x <= item.x + item.width &&
-                       y >= item.y && y <= item.y + item.height;
-            });
-
-            if (currentTool === 'select') {
-                selectedItem = clicked || null;
-                if (selectedItem) {
-                    updatePropertiesPanel(selectedItem);
+            selectedItem = null;
+            for (let i = nestingItems.length - 1; i >= 0; i--) {
+                const item = nestingItems[i];
+                if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
+                    selectedItem = item;
+                    draggedItem = item;
+                    break;
                 }
-                redrawCanvas();
-            } else if (currentTool === 'delete' && clicked) {
-                nestingItems = nestingItems.filter(item => item !== clicked);
-                redrawCanvas();
             }
 
-            updateCursorPosition(e);
-        }
+            redrawCanvas();
+        });
 
-        function handleCanvasMouseMove(e) {
-            updateCursorPosition(e);
-
-            if (currentTool === 'select' && selectedItem && e.buttons === 1) {
+        canvas.addEventListener('mousemove', (e) => {
+            if (draggedItem) {
                 const rect = canvas.getBoundingClientRect();
-                const deltaX = e.movementX / zoomLevel;
-                const deltaY = e.movementY / zoomLevel;
-
-                selectedItem.x += deltaX;
-                selectedItem.y += deltaY;
+                draggedItem.x += e.movementX / zoomLevel;
+                draggedItem.y += e.movementY / zoomLevel;
                 redrawCanvas();
-                updatePropertiesPanel(selectedItem);
             }
-        }
+        });
 
-        function handleCanvasMouseUp(e) {}
+        canvas.addEventListener('mouseup', () => {
+            draggedItem = null;
+        });
 
-        function handleCanvasContextMenu(e) {
+        canvas.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             const rect = canvas.getBoundingClientRect();
             const x = (e.clientX - rect.left - panX) / zoomLevel;
             const y = (e.clientY - rect.top - panY) / zoomLevel;
 
-            const clicked = nestingItems.find(item => {
-                return x >= item.x && x <= item.x + item.width &&
-                       y >= item.y && y <= item.y + item.height;
-            });
+            selectedItem = null;
+            for (let i = nestingItems.length - 1; i >= 0; i--) {
+                const item = nestingItems[i];
+                if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
+                    selectedItem = item;
+                    break;
+                }
+            }
 
-            if (clicked) {
-                selectedItem = clicked;
+            if (selectedItem) {
                 const menu = document.getElementById('contextMenu');
                 menu.style.left = e.clientX + 'px';
                 menu.style.top = e.clientY + 'px';
                 menu.style.display = 'block';
             }
-        }
+        });
 
-        function handleCanvasZoom(e) {
+        canvas.addEventListener('wheel', (e) => {
             e.preventDefault();
-            const oldZoom = zoomLevel;
             zoomLevel += e.deltaY > 0 ? -0.1 : 0.1;
             zoomLevel = Math.max(0.1, Math.min(3, zoomLevel));
-            
             document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
             redrawCanvas();
-        }
+        });
 
-        function handleCanvasDrop(e) {
-            e.preventDefault();
-            const assetId = e.dataTransfer.getData('assetId');
-            const asset = allAssets.find(a => a.id === assetId);
-            if (asset) {
-                addItemToNesting(asset);
+        document.addEventListener('click', (e) => {
+            if (e.target !== document.getElementById('contextMenu') && 
+                !document.getElementById('contextMenu').contains(e.target)) {
+                document.getElementById('contextMenu').style.display = 'none';
+            }
+        });
+
+        // ========== CONTEXT MENU ACTIONS ==========
+        function deleteItem() {
+            if (selectedItem) {
+                nestingItems = nestingItems.filter(item => item !== selectedItem);
+                selectedItem = null;
+                redrawCanvas();
+                document.getElementById('contextMenu').style.display = 'none';
+                showToast('Item deleted', 'success');
             }
         }
 
-        function updateCursorPosition(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = Math.round((e.clientX - rect.left - panX) / zoomLevel);
-            const y = Math.round((e.clientY - rect.top - panY) / zoomLevel);
-            document.getElementById('cursorPos').textContent = `X: ${x} Y: ${y}`;
-        }
-
-        // ========== TOOL MANAGEMENT ==========
-        function setTool(tool) {
-            currentTool = tool;
-            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('tool' + tool.charAt(0).toUpperCase() + tool.slice(1)).classList.add('active');
-        }
-
-        // ========== PROPERTIES PANEL ==========
-        function updatePropertiesPanel(item) {
-            document.getElementById('selectedItemName').textContent = item.name;
-            document.getElementById('selectedItemDim').textContent = `${item.width} × ${item.height} cm`;
-            document.getElementById('itemPosX').textContent = item.x.toFixed(1);
-            document.getElementById('itemPosY').textContent = item.y.toFixed(1);
-            document.getElementById('rotationSlider').value = item.rotation;
-            document.getElementById('rotationValue').textContent = item.rotation + '°';
-
-            document.getElementById('rotationSlider').oninput = (e) => {
-                item.rotation = parseFloat(e.target.value);
-                document.getElementById('rotationValue').textContent = item.rotation + '°';
-                redrawCanvas();
-            };
-        }
-
-        // ========== STATS UPDATE ==========
-        function updateStats(result) {
-            document.getElementById('statItems').textContent = result.items.length;
-            document.getElementById('statArea').textContent = result.totalArea.toFixed(2) + ' m²';
-            document.getElementById('statEfficiency').textContent = result.efficiency + '%';
-            document.getElementById('statCost').textContent = (result.totalArea * PRICING_RATES.banner).toFixed(0) + ' ETB';
-
-            document.getElementById('statusItems').textContent = result.items.length;
-            document.getElementById('statusLength').textContent = result.totalLength + ' cm';
-            document.getElementById('statusUsage').textContent = result.efficiency + '%';
-        }
-
-        // ========== CONTEXT MENU ACTIONS ==========
         function duplicateItem() {
-            if (!selectedItem) return;
-            const newItem = { ...selectedItem, id: `item-${Date.now()}`, x: selectedItem.x + 10, y: selectedItem.y + 10 };
-            nestingItems.push(newItem);
-            redrawCanvas();
-            document.getElementById('contextMenu').style.display = 'none';
-        }
-
-        function rotateItem() {
-            if (!selectedItem) return;
-            selectedItem.rotation = (selectedItem.rotation + 90) % 360;
-            updatePropertiesPanel(selectedItem);
-            redrawCanvas();
-            document.getElementById('contextMenu').style.display = 'none';
-        }
-
-        function deleteItem() {
-            if (!selectedItem) return;
-            nestingItems = nestingItems.filter(item => item !== selectedItem);
-            selectedItem = null;
-            redrawCanvas();
-            document.getElementById('contextMenu').style.display = 'none';
-        }
-
-        function sendToBack() {
-            if (!selectedItem) return;
-            const idx = nestingItems.indexOf(selectedItem);
-            nestingItems.splice(idx, 1);
-            nestingItems.unshift(selectedItem);
-            redrawCanvas();
-            document.getElementById('contextMenu').style.display = 'none';
-        }
-
-        function bringToFront() {
-            if (!selectedItem) return;
-            const idx = nestingItems.indexOf(selectedItem);
-            nestingItems.splice(idx, 1);
-            nestingItems.push(selectedItem);
-            redrawCanvas();
-            document.getElementById('contextMenu').style.display = 'none';
+            if (selectedItem) {
+                const newItem = { ...selectedItem, id: `item-${Date.now()}`, x: selectedItem.x + 15, y: selectedItem.y + 15 };
+                nestingItems.push(newItem);
+                redrawCanvas();
+                document.getElementById('contextMenu').style.display = 'none';
+                showToast('Item duplicated', 'success');
+            }
         }
 
         // ========== FILE OPERATIONS ==========
         function saveProject() {
+            const projectName = prompt('Project name:', 'Untitled-' + new Date().getTime());
+            if (!projectName) return;
+
             const project = {
-                name: prompt('Project name:', 'Untitled Project'),
+                name: projectName,
                 items: nestingItems,
                 settings: {
                     rollWidth: document.getElementById('rollWidth').value,
@@ -700,11 +650,15 @@
                 saved: new Date().toISOString()
             };
 
-            localStorage.setItem('project-' + project.name, JSON.stringify(project));
-            showToast('Project saved: ' + project.name, 'success');
+            localStorage.setItem('project-' + projectName, JSON.stringify(project));
+            showToast('Project saved: ' + projectName, 'success');
         }
 
         function exportNesting() {
+            if (nestingItems.length === 0) {
+                showToast('No items to export', 'warning');
+                return;
+            }
             document.getElementById('exportModal').style.display = 'flex';
         }
 
@@ -717,30 +671,48 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'nesting-layout.json';
+                a.download = 'nesting-' + new Date().toISOString().split('T')[0] + '.json';
                 a.click();
             } else if (format === 'png') {
                 const link = document.createElement('a');
-                link.download = 'nesting-layout.png';
+                link.download = 'nesting-' + new Date().toISOString().split('T')[0] + '.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
             }
 
             closeModal('exportModal');
-            showToast('Exported successfully', 'success');
+            showToast('Exported as ' + format.toUpperCase(), 'success');
         }
 
         function sendToTelegram() {
-            const canvas_data = canvas.toDataURL('image/png');
-            showToast('Sending to Telegram...', 'success');
-            // Implementation would send to server to post to Telegram
+            if (nestingItems.length === 0) {
+                showToast('No layout to send', 'warning');
+                return;
+            }
+            showToast('Sending to Telegram... (Feature coming soon)', 'warning');
         }
 
         function toggleSettings() {
-            showToast('Settings panel coming soon', 'warning');
+            showToast('Settings panel - More options coming soon', 'warning');
         }
 
-        // ========== MODAL FUNCTIONS ==========
+        function clearCanvas() {
+            if (confirm('Clear all items?')) {
+                nestingItems = [];
+                selectedItem = null;
+                redrawCanvas();
+                document.getElementById('statItems').textContent = '0';
+                document.getElementById('statArea').textContent = '0 m²';
+                document.getElementById('statEfficiency').textContent = '0%';
+                document.getElementById('statCost').textContent = '0';
+                showToast('Canvas cleared', 'success');
+            }
+        }
+
+        function updateMaterialCost() {
+            generateNesting();
+        }
+
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
@@ -749,14 +721,6 @@
         window.addEventListener('load', () => {
             initCanvas();
             loadAssets();
-            setTool('select');
-
-            document.addEventListener('click', (e) => {
-                if (e.target !== document.getElementById('contextMenu') && 
-                    !document.getElementById('contextMenu').contains(e.target)) {
-                    document.getElementById('contextMenu').style.display = 'none';
-                }
-            });
 
             window.addEventListener('resize', () => {
                 initCanvas();
