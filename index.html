@@ -18,7 +18,7 @@
         body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* Top Bar */
-        .top-bar { background-color: var(--bg-header); height: 55px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 10; }
+        .top-bar { background-color: var(--bg-header); min-height: 55px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 10; }
         .brand { color: var(--text-light); font-weight: 800; font-size: 20px; letter-spacing: 2px; display: flex; align-items: center; gap: 12px; }
         .brand span { color: var(--accent-gold); }
         .server-status { font-size: 12px; font-weight: 700; background: rgba(16, 185, 129, 0.05); padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
@@ -27,7 +27,7 @@
         .workspace { display: flex; flex: 1; overflow: hidden; }
 
         /* Sidebar */
-        .sidebar { width: 340px; background-color: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar { width: 340px; background-color: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
         .panel-section { padding: 25px; border-bottom: 1px solid var(--border); }
         .panel-title { font-size: 12px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 18px; font-weight: 800; letter-spacing: 1.5px; display: flex; align-items: center; gap: 8px; }
         
@@ -47,16 +47,16 @@
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); }
 
         /* Main Area */
-        .main-area { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-dark); }
-        .area-header { padding: 20px 35px; border-bottom: 1px solid var(--border); background: var(--bg-panel); display: flex; justify-content: space-between; align-items: center; }
+        .main-area { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-dark); overflow: hidden; }
+        .area-header { padding: 20px 35px; border-bottom: 1px solid var(--border); background: var(--bg-panel); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .area-header h2 { font-size: 18px; font-weight: 700; color: var(--text-light); }
         
-        .search-box { position: relative; width: 280px; }
+        .search-box { position: relative; width: 280px; max-width: 100%; }
         .search-box input { width: 100%; background: #000000; border: 1px solid var(--border); padding: 10px 15px 10px 40px; border-radius: 8px; color: white; font-size: 13px; outline: none; transition: 0.2s; }
         .search-box input:focus { border-color: var(--accent-gold); }
         .search-box i { position: absolute; left: 15px; top: 12px; color: #71717a; font-size: 14px; }
 
-        .file-grid { flex: 1; padding: 35px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; align-content: flex-start; }
+        .file-grid { flex: 1; padding: 35px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; align-content: flex-start; }
         .file-card { background: #0a0a0a; border: 1px solid var(--border); border-radius: 12px; padding: 20px; cursor: pointer; transition: 0.3s; position: relative; user-select: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .file-card:hover { border-color: #333333; transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
         .file-card.selected { border-color: var(--accent-gold); background: rgba(212, 175, 55, 0.05); }
@@ -76,31 +76,52 @@
 
         /* Full Screen RIP Workspace */
         .fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #050505; z-index: 9999; display: none; flex-direction: column; }
-        .fs-toolbar { height: 75px; background: #0a0a0a; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.8); z-index: 10; }
-        .fs-title { color: var(--accent-gold); font-weight: 900; font-size: 22px; display: flex; align-items: center; gap: 15px; letter-spacing: 1px; text-transform: uppercase; }
-        .fs-stats { display: flex; gap: 30px; font-size: 14px; background: #000; padding: 12px 25px; border-radius: 10px; border: 1px solid #222; align-items: center; }
-        .fs-stats div { border-right: 1px solid #222; padding-right: 25px; color: #a1a1aa; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+        .fs-toolbar { min-height: 75px; background: #0a0a0a; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 10px 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.8); z-index: 10; flex-wrap: wrap; gap: 15px; }
+        .fs-title { color: var(--accent-gold); font-weight: 900; font-size: 20px; display: flex; align-items: center; gap: 15px; letter-spacing: 1px; text-transform: uppercase; }
+        .fs-stats { display: flex; gap: 20px; font-size: 14px; background: #000; padding: 12px 20px; border-radius: 10px; border: 1px solid #222; align-items: center; flex-wrap: wrap; }
+        .fs-stats div { border-right: 1px solid #222; padding-right: 20px; color: #a1a1aa; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
         .fs-stats div:last-child { border: none; padding-right: 0; }
         .fs-stats span { display: block; color: var(--text-light); font-weight: 800; font-size: 16px; margin-top: 4px; }
         .fs-stats span.highlight { color: #10b981; }
         
-        .export-group { display: flex; gap: 15px; align-items: center; }
-        .export-select { background: #000; color: white; border: 1px solid #333; padding: 12px 20px; border-radius: 8px; outline: none; font-size: 14px; font-weight: 600; }
-        .btn-export { background: #10b981; color: #000; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 800; display: flex; align-items: center; gap: 10px; font-size: 14px; text-transform: uppercase; }
+        .export-group { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        .export-select { background: #000; color: white; border: 1px solid #333; padding: 12px; border-radius: 8px; outline: none; font-size: 13px; font-weight: 600; }
+        .btn-export { background: #10b981; color: #000; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; display: flex; align-items: center; gap: 8px; font-size: 13px; text-transform: uppercase; }
         .btn-export:hover { background: #059669; }
-        .btn-close { background: #ef4444; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 14px; text-transform: uppercase; }
+        .btn-close { background: #ef4444; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 13px; text-transform: uppercase; }
 
-        .canvas-wrapper { flex: 1; overflow: auto; padding: 60px; display: flex; justify-content: center; align-items: flex-start; background: #0f0f11; }
-        /* The Canvas visually scaled for screen, but internally massive for export */
-        #nestCanvas { background: #ffffff; box-shadow: 0 30px 60px rgba(0,0,0,0.9); transform-origin: top center; max-width: 100%; height: auto; } 
+        .canvas-wrapper { flex: 1; overflow: auto; padding: 40px; display: flex; justify-content: center; align-items: flex-start; background: #0f0f11; }
+        #nestCanvas { background: #ffffff; box-shadow: 0 30px 60px rgba(0,0,0,0.9); max-width: 100%; height: auto; } 
 
         /* Dimensions Edit Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
-        .modal-content { background: #0a0a0a; border: 1px solid var(--border); width: 360px; padding: 35px; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
+        .modal-content { background: #0a0a0a; border: 1px solid var(--border); width: 90%; max-width: 360px; padding: 35px; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
         .modal-content h3 { color: var(--accent-gold); font-size: 18px; margin-bottom: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
         .modal-actions { display: flex; gap: 15px; margin-top: 30px; }
         .modal-actions button { flex: 1; padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 800; font-size: 14px; text-transform: uppercase; }
         .btn-cancel { background: #222; color: white; }
+
+        /* =========================================
+           📱 MOBILE RESPONSIVE FIXES (የስልክ ስክሪን ማስተካከያ)
+           ========================================= */
+        @media (max-width: 850px) {
+            body { overflow: auto; height: auto; }
+            .workspace { flex-direction: column; overflow: visible; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; flex-shrink: 1; }
+            .main-area { flex: none; overflow-y: visible; min-height: 500px; }
+            .top-bar { flex-direction: column; padding: 15px; gap: 10px; text-align: center; }
+            .area-header { flex-direction: column; align-items: flex-start; }
+            .search-box { width: 100%; }
+            .file-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); padding: 15px; gap: 15px; }
+            .file-card { padding: 15px; }
+            .file-icon { font-size: 40px; }
+            .fs-toolbar { flex-direction: column; padding: 15px; gap: 15px; align-items: flex-start; }
+            .fs-stats { width: 100%; justify-content: flex-start; }
+            .fs-stats div { border: none; padding-right: 10px; margin-bottom: 5px; }
+            .export-group { width: 100%; justify-content: space-between; }
+            .export-select { flex: 1; }
+            .canvas-wrapper { padding: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -351,9 +372,6 @@
             selectActiveDirectory(currentSelectedDirectory);
         }
 
-        // ==========================================
-        // SUPER MASTER NESTING ALGORITHM (RIP ENGINE)
-        // ==========================================
         function startRIPEngine() {
             const activeSelections = globalFilesArray.filter(f => f.selected);
             if(activeSelections.length === 0) return alert('No files selected for processing.');
@@ -365,7 +383,6 @@
 
             let processingPool = [];
             
-            // Expand QTY
             activeSelections.forEach(file => {
                 for(let k = 0; k < file.qty; k++) {
                     let w = parseInt(file.size.width);
@@ -376,7 +393,6 @@
                         return;
                     }
 
-                    // Smart Rotation
                     if(allowRot && w > h && w > rollWidth && h <= rollWidth) {
                         let temp = w; w = h; h = temp;
                     } else if(allowRot && h > w && h <= rollWidth && (w + gap) > (h + gap)) {
@@ -387,7 +403,6 @@
                 }
             });
 
-            // Sort by Height Descending
             processingPool.sort((a,b) => b.h - a.h);
 
             let cx = 0, cy = 0, currentRowHeight = 0;
@@ -415,13 +430,10 @@
             const totalRequiredLength = cy + currentRowHeight;
             const totalRollUsedArea = rollWidth * totalRequiredLength;
             
-            // Costs & Efficiency
             const performanceEfficiency = totalRollUsedArea > 0 ? ((combinedAssetArea / totalRollUsedArea) * 100).toFixed(1) : 0;
             const totalSquareMeters = (totalRollUsedArea / 10000).toFixed(2);
             const overallCostEstimation = (totalSquareMeters * PRICING_RATES[activeMaterial]).toFixed(2);
 
-            // HIGHEST QUALITY CANVAS RENDERING (1cm = 10px resolution)
-            // Example: 200cm roll -> 2000px width output.
             const scale = 10; 
             const canvas = document.getElementById('nestCanvas');
             const ctx = canvas.getContext('2d');
@@ -429,7 +441,6 @@
             canvas.width = rollWidth * scale;
             canvas.height = totalRequiredLength * scale;
             
-            // Fill White Roll Background
             ctx.fillStyle = '#ffffff'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -437,14 +448,12 @@
                 const rx = item.x * scale, ry = item.y * scale;
                 const rw = item.w * scale, rh = item.h * scale;
 
-                // Inner Box Area
                 ctx.fillStyle = 'rgba(212, 175, 55, 0.05)';
                 ctx.strokeStyle = '#d4af37';
                 ctx.lineWidth = 4;
                 ctx.fillRect(rx, ry, rw, rh);
                 ctx.strokeRect(rx, ry, rw, rh);
 
-                // Cross X mark for visual cutting guide (Optional Pro aesthetic)
                 ctx.beginPath();
                 ctx.moveTo(rx, ry);
                 ctx.lineTo(rx + rw, ry + rh);
@@ -454,9 +463,8 @@
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // High-Res Text Labels
                 ctx.fillStyle = '#000000';
-                ctx.font = 'bold 36px Segoe UI'; // Scaled font for high res export
+                ctx.font = 'bold 36px Segoe UI'; 
                 ctx.fillText(`${item.w} x ${item.h} cm`, rx + 25, ry + 55);
                 
                 ctx.fillStyle = '#555555';
@@ -465,7 +473,6 @@
                 ctx.fillText(optimizedName, rx + 25, ry + 100);
             });
 
-            // Populate Stats Bar
             document.getElementById('nestStats').innerHTML = `
                 <div>Length Required<br><span>${totalRequiredLength} cm</span></div>
                 <div>Substrate Area<br><span>${totalSquareMeters} m²</span></div>
@@ -476,9 +483,6 @@
             document.getElementById('fullscreenWorkspace').style.display = 'flex';
         }
 
-        // ==========================================
-        // HIGH DEFINITION EXPORT LOGIC
-        // ==========================================
         function executeRIPExport() {
             const format = document.getElementById('exportFormat').value;
             const canvas = document.getElementById('nestCanvas');
@@ -488,12 +492,10 @@
             if(format === 'png' || format === 'jpg') {
                 const anchor = document.createElement('a');
                 anchor.download = `${exportedFileName}.${format}`;
-                // 1.0 quality parameter ensures maximum sharpness
                 anchor.href = canvas.toDataURL(`image/${format === 'jpg' ? 'jpeg' : 'png'}`, 1.0);
                 anchor.click();
             } else if(format === 'pdf') {
                 const { jsPDF } = window.jspdf;
-                // PDF auto dimensions based on the canvas pixel size
                 const documentPDF = new jsPDF({
                     orientation: canvas.width > canvas.height ? 'l' : 'p',
                     unit: 'px',
