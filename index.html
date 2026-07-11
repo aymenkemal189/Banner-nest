@@ -20,16 +20,16 @@
         body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
         /* Top Bar */
-        .top-bar { background-color: var(--bg-header); min-height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .top-bar { background-color: var(--bg-header); min-height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--border); }
         .brand { color: var(--text-light); font-weight: 900; font-size: 24px; letter-spacing: 2px; display: flex; align-items: center; gap: 12px; }
         .brand span { color: var(--accent-gold); }
         .brand i { font-size: 28px; }
 
-        .server-status { font-size: 11px; font-weight: 700; background: rgba(16, 185, 129, 0.1); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; display: flex; align-items: center; gap: 8px; }
+        .server-status { font-size: 11px; font-weight: 700; background: rgba(16, 185, 129, 0.1); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; display: flex; align-items: center; gap:8px; }
         .server-status.offline { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
 
         .top-actions { display: flex; gap: 15px; align-items: center; }
-        .btn-icon { background: transparent; border: 1px solid var(--border); color: var(--text-light); width: 45px; height: 45px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; font-size: 18px; }
+        .btn-icon { background: transparent; border: 1px solid var(--border); color: var(--text-light); width: 45px; height: 45px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-icon:hover { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(212, 175, 55, 0.1); }
 
         /* Main Container */
@@ -61,7 +61,7 @@
         .tool-group input, .tool-group select { background: #1a1a1a; color: var(--text-light); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; font-size: 12px; }
         .tool-group input:focus, .tool-group select:focus { border-color: var(--accent-gold); outline: none; }
 
-        .tool-btn { background: transparent; border: 1px solid var(--border); color: var(--text-light); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: 0.2s; }
+        .tool-btn { background: transparent; border: 1px solid var(--border); color: var(--text-light); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
         .tool-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
         .tool-btn.active { background: var(--accent-gold); color: #000; border-color: var(--accent-gold); }
 
@@ -83,13 +83,13 @@
         .prop-display { background: #1a1a1a; padding: 12px; border-radius: 6px; font-size: 12px; color: var(--accent-gold); font-weight: 700; }
 
         /* Bottom Status Bar */
-        .status-bar { background: var(--bg-header); padding: 15px 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; font-size: 11px; }
+        .status-bar { background: var(--bg-header); padding: 15px 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
         .status-item { display: flex; align-items: center; gap: 8px; }
         .status-value { color: var(--accent-gold); font-weight: 700; }
 
         /* Toast Notifications */
         .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10001; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: var(--bg-panel); border: 1px solid var(--border); border-left: 4px solid var(--accent-gold); padding: 16px; border-radius: 8px; min-width: 300px; display: flex; align-items: center; gap: 15px; animation: slideIn 0.3s ease; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        .toast { background: var(--bg-panel); border: 1px solid var(--border); border-left: 4px solid var(--accent-gold); padding: 16px; border-radius: 8px; min-width: 300px; display: flex; align-items: center; gap: 12px; }
         .toast.success { border-left-color: var(--success); }
         .toast.error { border-left-color: var(--danger); }
         .toast.warning { border-left-color: var(--warning); }
@@ -147,7 +147,7 @@
         <div class="assets-panel">
             <div class="panel-header">
                 <div class="panel-title"><i class="fa-solid fa-images"></i> Assets Library</div>
-                <input type="text" id="searchAssets" placeholder="Search..." style="width: 100%; padding: 8px; background: #1a1a1a; border: 1px solid var(--border); border-radius: 6px; color: var(--text-light); font-size: 11px;">
+                <input type="text" id="searchAssets" placeholder="Search..." style="width: 100%; padding: 8px; background: #1a1a1a; border: 1px solid var(--border); border-radius: 6px; color: var(--text-light);">
             </div>
             <div class="assets-content" id="assetsContainer"></div>
         </div>
@@ -257,16 +257,13 @@
     </div>
 
     <script>
-        const API_URL = 'https://wubet-print-api.onrender.com/api';
-        
+        const API_URL = 'https://wubet-print-api.onrender.com/api'; // change to your backend if needed
+
         let canvas = document.getElementById('nestingCanvas');
         let ctx = canvas.getContext('2d');
         let nestingItems = [];
         let allAssets = [];
         let selectedItem = null;
-        let zoomLevel = 1;
-        let panX = 0, panY = 0;
-        let draggedItem = null;
 
         const PRICING_RATES = { banner: 350, sticker: 450, canvas: 550 };
 
@@ -306,6 +303,16 @@
                 }
                 
                 allAssets = await response.json();
+
+                // Normalize items (in case API returns url or path)
+                const apiBase = API_URL.replace(/\/api\/?$/, '');
+                allAssets = allAssets.map((a, i) => ({
+                    id: a.id ?? i,
+                    name: a.name ?? `file-${i}`,
+                    path: a.path || (a.url ? (a.url.startsWith('http') ? a.url : `${apiBase}${a.url}`) : null),
+                    size: a.size || { width: a.width || '?', height: a.height || '?' }
+                }));
+
                 renderAssetsPanel();
                 document.getElementById('serverStatus').innerHTML = '<i class="fa-solid fa-satellite-dish"></i> SERVER READY';
                 showToast(`Loaded ${allAssets.length} assets`, 'success');
@@ -321,7 +328,7 @@
             const container = document.getElementById('assetsContainer');
             container.innerHTML = '';
             
-            if (allAssets.length === 0) {
+            if (!allAssets || allAssets.length === 0) {
                 container.innerHTML = '<p style="color: #a1a1aa; text-align: center; padding: 20px;">No assets found</p>';
                 return;
             }
@@ -345,12 +352,110 @@
                     </div>
                 `;
                 
-                div.onclick = () => addItemToNesting(asset, div.querySelector('input').value);
+                div.onclick = () => {
+                    const qtyInput = div.querySelector('input[data-asset-id]');
+                    addItemToNesting(asset, qtyInput ? qtyInput.value : 1);
+                };
                 container.appendChild(div);
             });
         }
 
-        // ========== ADVANCED NESTING ENGINE ==========
+        // ========== RENDER HELPER ==========
+        function renderLayoutToContext(renderCtx, targetWidthCm, targetLengthCm, items, pixelsPerCm) {
+            const wPx = Math.ceil(targetWidthCm * pixelsPerCm);
+            const hPx = Math.ceil(targetLengthCm * pixelsPerCm);
+
+            // clear
+            renderCtx.clearRect(0, 0, wPx, hPx);
+            // white background
+            renderCtx.fillStyle = '#ffffff';
+            renderCtx.fillRect(0, 0, wPx, hPx);
+
+            // grid (optional)
+            renderCtx.strokeStyle = 'rgba(0,0,0,0.06)';
+            renderCtx.lineWidth = 1;
+            const gridCm = 5;
+            for (let x = 0; x <= wPx; x += gridCm * pixelsPerCm) {
+                renderCtx.beginPath();
+                renderCtx.moveTo(x, 0);
+                renderCtx.lineTo(x, hPx);
+                renderCtx.stroke();
+            }
+            for (let y = 0; y <= hPx; y += gridCm * pixelsPerCm) {
+                renderCtx.beginPath();
+                renderCtx.moveTo(0, y);
+                renderCtx.lineTo(wPx, y);
+                renderCtx.stroke();
+            }
+
+            // draw items
+            items.forEach(item => {
+                const x = Math.round(item.x * pixelsPerCm);
+                const y = Math.round(item.y * pixelsPerCm);
+                const w = Math.round(item.width * pixelsPerCm);
+                const h = Math.round(item.height * pixelsPerCm);
+
+                renderCtx.save();
+                if (item.rotation && item.rotation !== 0) {
+                    renderCtx.translate(x + w / 2, y + h / 2);
+                    renderCtx.rotate((item.rotation * Math.PI) / 180);
+                    renderCtx.translate(-w / 2, -h / 2);
+                    renderCtx.fillStyle = 'rgba(37, 99, 235, 0.15)';
+                    renderCtx.fillRect(0, 0, w, h);
+                    renderCtx.strokeStyle = '#2563eb';
+                    renderCtx.lineWidth = 2;
+                    renderCtx.strokeRect(0, 0, w, h);
+
+                    renderCtx.font = 'bold 12px Arial';
+                    renderCtx.fillStyle = '#000';
+                    renderCtx.textAlign = 'center';
+                    renderCtx.fillText(item.name.substring(0, 18), w / 2, h / 2 - 5);
+                    renderCtx.font = '10px Arial';
+                    renderCtx.fillText(`${item.width}×${item.height}cm`, w / 2, h / 2 + 12);
+                } else {
+                    renderCtx.fillStyle = 'rgba(37, 99, 235, 0.15)';
+                    renderCtx.fillRect(x, y, w, h);
+                    renderCtx.strokeStyle = '#2563eb';
+                    renderCtx.lineWidth = 2;
+                    renderCtx.strokeRect(x, y, w, h);
+
+                    renderCtx.font = 'bold 12px Arial';
+                    renderCtx.fillStyle = '#000';
+                    renderCtx.textAlign = 'center';
+                    renderCtx.fillText(item.name.substring(0, 18), x + w / 2, y + h / 2 - 5);
+                    renderCtx.font = '10px Arial';
+                    renderCtx.fillText(`${item.width}×${item.height}cm`, x + w / 2, y + h / 2 + 12);
+                }
+                renderCtx.restore();
+            });
+        }
+
+        // ========== CANVAS DRAWING (preview) ==========
+        function redrawCanvas() {
+            const wrapper = document.querySelector('.nesting-canvas-wrapper');
+            const previewW = wrapper.clientWidth - 40;
+            const previewH = wrapper.clientHeight - 40;
+
+            const rollWidth = parseInt(document.getElementById('rollWidth').value);
+            let totalLength = 0;
+            if (nestingItems.length === 0) totalLength = 100; // default preview length
+            else {
+                const maxY = Math.max(...nestingItems.map(it => it.y + it.height));
+                totalLength = Math.max(maxY + 20, 100); // some margin
+            }
+
+            // compute pixelsPerCm for preview so whole roll width fits previewW
+            const pixelsPerCmPreview = previewW / rollWidth;
+
+            // resize canvas for preview
+            canvas.width = previewW;
+            canvas.height = Math.min(previewH, Math.ceil(totalLength * pixelsPerCmPreview));
+            const previewCtx = canvas.getContext('2d');
+
+            renderLayoutToContext(previewCtx, rollWidth, totalLength, nestingItems, pixelsPerCmPreview);
+        }
+
+        // ========== NESTING ALGORITHM ==========
         function generateNesting() {
             if (nestingItems.length === 0) {
                 showToast('Add items first by clicking on assets', 'warning');
@@ -361,13 +466,8 @@
             const gap = parseInt(document.getElementById('gapSize').value) || 0;
             const allowRotation = document.getElementById('allowRotation').checked;
 
-            // Process items for nesting
-            let itemsToNest = [];
-            nestingItems.forEach(item => {
-                itemsToNest.push({ ...item });
-            });
+            let itemsToNest = nestingItems.map(i => ({ ...i }));
 
-            // Sort by area (First Fit Decreasing)
             itemsToNest.sort((a, b) => (b.width * b.height) - (a.width * a.height));
 
             let nestedItems = [];
@@ -375,28 +475,27 @@
             let currentRowHeight = 0;
             let currentRowX = 0;
 
-            itemsToNest.forEach((item, idx) => {
+            itemsToNest.forEach((item) => {
                 let itemWidth = item.width;
                 let itemHeight = item.height;
                 let rotated = false;
 
-                // Try to fit in current row
                 if (currentRowX + itemWidth + gap <= rollWidth) {
-                    // Fits normally
+                    // fits
                 } else if (allowRotation && currentRowX + itemHeight + gap <= rollWidth && itemHeight !== itemWidth) {
-                    // Try rotated
-                    if (itemHeight < rollWidth) {
-                        [itemWidth, itemHeight] = [itemHeight, itemWidth];
-                        rotated = true;
-                    }
+                    [itemWidth, itemHeight] = [itemHeight, itemWidth];
+                    rotated = true;
                 } else {
-                    // Move to next row
+                    // next row
                     currentY += currentRowHeight + gap;
                     currentRowX = 0;
                     currentRowHeight = 0;
+                    if (currentRowX + itemWidth + gap > rollWidth && allowRotation && itemHeight !== itemWidth && itemHeight <= rollWidth) {
+                        [itemWidth, itemHeight] = [itemHeight, itemWidth];
+                        rotated = true;
+                    }
                 }
 
-                // Add item to nesting
                 nestedItems.push({
                     ...item,
                     x: currentRowX,
@@ -410,16 +509,15 @@
                 currentRowHeight = Math.max(currentRowHeight, itemHeight);
             });
 
-            // Calculate statistics
             const totalLength = currentY + currentRowHeight;
             const totalArea = (rollWidth * totalLength) / 10000; // m²
-            const usedArea = nestedItems.reduce((sum, item) => sum + (item.width * item.height), 0) / 10000;
-            const efficiency = ((usedArea / totalArea) * 100).toFixed(2);
+            const usedArea = nestedItems.reduce((sum, it) => sum + (it.width * it.height), 0) / 10000;
+            const efficiency = totalArea > 0 ? ((usedArea / totalArea) * 100).toFixed(2) : '0.00';
             const material = document.getElementById('materialType').value;
             const totalCost = (totalArea * PRICING_RATES[material]).toFixed(0);
 
             nestingItems = nestedItems;
-            
+
             // Update stats
             document.getElementById('statItems').textContent = nestedItems.length;
             document.getElementById('statArea').textContent = totalArea.toFixed(2) + ' m²';
@@ -437,205 +535,82 @@
 
         function addItemToNesting(asset, quantity = 1) {
             const qty = parseInt(quantity) || 1;
-            
             for (let i = 0; i < qty; i++) {
                 const item = {
-                    id: `item-${Date.now()}-${i}`,
+                    id: `item-${Date.now()}-${Math.random().toString(36).substr(2,5)}`,
                     name: asset.name,
-                    width: asset.size.width,
-                    height: asset.size.height,
+                    width: Number(asset.size.width) || 10,
+                    height: Number(asset.size.height) || 10,
                     x: 10 + (nestingItems.length * 2),
                     y: 10 + (nestingItems.length * 2),
                     rotation: 0,
                     path: asset.path
                 };
-                
                 nestingItems.push(item);
             }
-            
             redrawCanvas();
             showToast(`Added ${qty}x ${asset.name}`, 'success');
         }
 
-        // ========== CANVAS DRAWING ==========
-        function redrawCanvas() {
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // ========== EXPORT improvement: offscreen canvas ==========
+        function confirmExport() {
+            const format = document.getElementById('exportFormat').value;
             
-            drawGrid();
-            
-            nestingItems.forEach((item, idx) => {
-                drawItem(item, item === selectedItem);
-            });
+            if (nestingItems.length === 0) {
+                showToast('No items to export', 'warning');
+                closeModal('exportModal');
+                return;
+            }
 
-            drawRuler();
+            const rollWidth = parseInt(document.getElementById('rollWidth').value);
+            const maxY = Math.max(...nestingItems.map(it => it.y + it.height));
+            const totalLength = Math.max(maxY + 10, 10); // cm
+
+            const ppcm = 10; // pixels per cm for export (adjust for higher res)
+            const exportW = Math.ceil(rollWidth * ppcm);
+            const exportH = Math.ceil(totalLength * ppcm);
+
+            const off = document.createElement('canvas');
+            off.width = exportW;
+            off.height = exportH;
+            const offCtx = off.getContext('2d');
+
+            renderLayoutToContext(offCtx, rollWidth, totalLength, nestingItems, ppcm);
+
+            if (format === 'json') {
+                const data = JSON.stringify(nestingItems, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'nesting-' + new Date().toISOString().split('T')[0] + '.json';
+                a.click();
+            } else if (format === 'png') {
+                off.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'nesting-' + new Date().toISOString().split('T')[0] + '.png';
+                    a.click();
+                }, 'image/png');
+            } else if (format === 'pdf') {
+                const imgData = off.toDataURL('image/png');
+                const pdf = new jspdf.jsPDF({
+                    orientation: 'portrait',
+                    unit: 'pt',
+                    format: [exportW, exportH]
+                });
+                pdf.addImage(imgData, 'PNG', 0, 0, exportW, exportH);
+                pdf.save('nesting-' + new Date().toISOString().split('T')[0] + '.pdf');
+            } else if (format === 'svg') {
+                showToast('SVG export coming soon', 'warning');
+            }
+
+            closeModal('exportModal');
+            showToast('Exported as ' + format.toUpperCase(), 'success');
         }
 
-        function drawItem(item, isSelected) {
-            const x = item.x * zoomLevel + panX;
-            const y = item.y * zoomLevel + panY;
-            const w = item.width * zoomLevel;
-            const h = item.height * zoomLevel;
-
-            ctx.save();
-            
-            if (item.rotation !== 0) {
-                ctx.translate(x + w / 2, y + h / 2);
-                ctx.rotate((item.rotation * Math.PI) / 180);
-                ctx.translate(-(w / 2), -(h / 2));
-            }
-
-            // Draw item
-            ctx.fillStyle = isSelected ? 'rgba(212, 175, 55, 0.3)' : 'rgba(37, 99, 235, 0.15)';
-            ctx.strokeStyle = isSelected ? '#d4af37' : '#2563eb';
-            ctx.lineWidth = isSelected ? 3 : 2;
-            ctx.fillRect(x - (item.rotation ? w / 2 : 0), y - (item.rotation ? h / 2 : 0), w, h);
-            ctx.strokeRect(x - (item.rotation ? w / 2 : 0), y - (item.rotation ? h / 2 : 0), w, h);
-
-            // Draw text
-            ctx.font = 'bold 11px Arial';
-            ctx.fillStyle = '#000';
-            ctx.textAlign = 'center';
-            ctx.fillText(item.name.substring(0, 12), x + w / 2, y + h / 2 - 5);
-            
-            ctx.font = '9px Arial';
-            ctx.fillText(`${item.width}×${item.height}cm`, x + w / 2, y + h / 2 + 8);
-
-            ctx.restore();
-
-            // Draw selection box
-            if (isSelected) {
-                ctx.strokeStyle = '#d4af37';
-                ctx.lineWidth = 2;
-                ctx.setLineDash([5, 5]);
-                ctx.strokeRect(x - 5, y - 5, w + 10, h + 10);
-                ctx.setLineDash([]);
-            }
-        }
-
-        function drawGrid() {
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.03)';
-            ctx.lineWidth = 1;
-            const gridSize = 50;
-
-            for (let i = 0; i < canvas.width; i += gridSize) {
-                ctx.beginPath();
-                ctx.moveTo(i, 0);
-                ctx.lineTo(i, canvas.height);
-                ctx.stroke();
-            }
-
-            for (let i = 0; i < canvas.height; i += gridSize) {
-                ctx.beginPath();
-                ctx.moveTo(0, i);
-                ctx.lineTo(canvas.width, i);
-                ctx.stroke();
-            }
-        }
-
-        function drawRuler() {
-            ctx.fillStyle = '#000';
-            ctx.font = '9px Arial';
-            ctx.textAlign = 'center';
-
-            for (let i = 0; i < canvas.width; i += 100) {
-                ctx.fillRect(i, 0, 1, 8);
-                ctx.fillText(i / 10, i, 15);
-            }
-        }
-
-        // ========== CANVAS EVENTS ==========
-        canvas.addEventListener('mousedown', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left - panX) / zoomLevel;
-            const y = (e.clientY - rect.top - panY) / zoomLevel;
-
-            selectedItem = null;
-            for (let i = nestingItems.length - 1; i >= 0; i--) {
-                const item = nestingItems[i];
-                if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
-                    selectedItem = item;
-                    draggedItem = item;
-                    break;
-                }
-            }
-
-            redrawCanvas();
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            if (draggedItem) {
-                const rect = canvas.getBoundingClientRect();
-                draggedItem.x += e.movementX / zoomLevel;
-                draggedItem.y += e.movementY / zoomLevel;
-                redrawCanvas();
-            }
-        });
-
-        canvas.addEventListener('mouseup', () => {
-            draggedItem = null;
-        });
-
-        canvas.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left - panX) / zoomLevel;
-            const y = (e.clientY - rect.top - panY) / zoomLevel;
-
-            selectedItem = null;
-            for (let i = nestingItems.length - 1; i >= 0; i--) {
-                const item = nestingItems[i];
-                if (x >= item.x && x <= item.x + item.width && y >= item.y && y <= item.y + item.height) {
-                    selectedItem = item;
-                    break;
-                }
-            }
-
-            if (selectedItem) {
-                const menu = document.getElementById('contextMenu');
-                menu.style.left = e.clientX + 'px';
-                menu.style.top = e.clientY + 'px';
-                menu.style.display = 'block';
-            }
-        });
-
-        canvas.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            zoomLevel += e.deltaY > 0 ? -0.1 : 0.1;
-            zoomLevel = Math.max(0.1, Math.min(3, zoomLevel));
-            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
-            redrawCanvas();
-        });
-
-        document.addEventListener('click', (e) => {
-            if (e.target !== document.getElementById('contextMenu') && 
-                !document.getElementById('contextMenu').contains(e.target)) {
-                document.getElementById('contextMenu').style.display = 'none';
-            }
-        });
-
-        // ========== CONTEXT MENU ACTIONS ==========
-        function deleteItem() {
-            if (selectedItem) {
-                nestingItems = nestingItems.filter(item => item !== selectedItem);
-                selectedItem = null;
-                redrawCanvas();
-                document.getElementById('contextMenu').style.display = 'none';
-                showToast('Item deleted', 'success');
-            }
-        }
-
-        function duplicateItem() {
-            if (selectedItem) {
-                const newItem = { ...selectedItem, id: `item-${Date.now()}`, x: selectedItem.x + 15, y: selectedItem.y + 15 };
-                nestingItems.push(newItem);
-                redrawCanvas();
-                document.getElementById('contextMenu').style.display = 'none';
-                showToast('Item duplicated', 'success');
-            }
-        }
-
-        // ========== FILE OPERATIONS ==========
+        // ========== FILE OPERATIONS & UI helpers ==========
         function saveProject() {
             const projectName = prompt('Project name:', 'Untitled-' + new Date().getTime());
             if (!projectName) return;
@@ -660,28 +635,6 @@
                 return;
             }
             document.getElementById('exportModal').style.display = 'flex';
-        }
-
-        function confirmExport() {
-            const format = document.getElementById('exportFormat').value;
-            
-            if (format === 'json') {
-                const data = JSON.stringify(nestingItems, null, 2);
-                const blob = new Blob([data], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'nesting-' + new Date().toISOString().split('T')[0] + '.json';
-                a.click();
-            } else if (format === 'png') {
-                const link = document.createElement('a');
-                link.download = 'nesting-' + new Date().toISOString().split('T')[0] + '.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            }
-
-            closeModal('exportModal');
-            showToast('Exported as ' + format.toUpperCase(), 'success');
         }
 
         function sendToTelegram() {
