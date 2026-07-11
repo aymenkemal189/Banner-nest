@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AK BANNER NEST | Ultimate RIP Suite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* Pure Aristocratic Black Theme */
+        :root {
+            --bg-dark: #000000; --bg-panel: #0a0a0a; --bg-header: #050505;
+            --accent: #2563eb; --accent-hover: #1d4ed8; --accent-gold: #d4af37;
+            --text-main: #e4e4e7; --text-light: #ffffff; --border: #1f1f22;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* Top Bar */
+        .top-bar { background-color: var(--bg-header); min-height: 55px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 10; }
+        .brand { color: var(--text-light); font-weight: 800; font-size: 20px; letter-spacing: 2px; display: flex; align-items: center; gap: 12px; }
+        .brand span { color: var(--accent-gold); }
+        .server-status { font-size: 12px; font-weight: 700; background: rgba(16, 185, 129, 0.05); padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Workspace */
+        .workspace { display: flex; flex: 1; overflow: hidden; }
+
+        /* Sidebar */
+        .sidebar { width: 340px; background-color: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
+        .panel-section { padding: 25px; border-bottom: 1px solid var(--border); }
+        .panel-title { font-size: 12px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 18px; font-weight: 800; letter-spacing: 1.5px; display: flex; align-items: center; gap: 8px; }
+        
+        /* Folders List */
+        .folder-list { display: flex; flex-direction: column; gap: 8px; }
+        .folder-item { padding: 12px 15px; background: #111111; border-radius: 8px; cursor: pointer; font-size: 13px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); transition: 0.2s; font-weight: 600; }
+        .folder-item:hover { border-color: #333333; }
+        .folder-item.active { background: rgba(212, 175, 55, 0.1); border-color: var(--accent-gold); color: var(--accent-gold); }
+        .folder-item.active span:last-child { background: var(--accent-gold); color: #000; }
+        
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 12px; margin-bottom: 8px; color: #a1a1aa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group select, .form-group input { width: 100%; background: #000000; color: var(--text-light); border: 1px solid var(--border); padding: 12px; border-radius: 8px; outline: none; font-size: 14px; transition: 0.2s; }
+        .form-group select:focus, .form-group input:focus { border-color: var(--accent-gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.1); }
+        
+        .btn-primary { width: 100%; background: linear-gradient(45deg, var(--accent-gold), #b8860b); color: #000000; border: none; padding: 16px; border-radius: 8px; cursor: pointer; font-weight: 800; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); }
+
+        /* Main Area */
+        .main-area { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-dark); overflow: hidden; }
+        .area-header { padding: 20px 35px; border-bottom: 1px solid var(--border); background: var(--bg-panel); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .area-header h2 { font-size: 18px; font-weight: 700; color: var(--text-light); }
+        
+        .search-box { position: relative; width: 280px; max-width: 100%; }
+        .search-box input { width: 100%; background: #000000; border: 1px solid var(--border); padding: 10px 15px 10px 40px; border-radius: 8px; color: white; font-size: 13px; outline: none; transition: 0.2s; }
+        .search-box input:focus { border-color: var(--accent-gold); }
+        .search-box i { position: absolute; left: 15px; top: 12px; color: #71717a; font-size: 14px; }
+
+        .file-grid { flex: 1; padding: 35px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; align-content: flex-start; }
+        .file-card { background: #0a0a0a; border: 1px solid var(--border); border-radius: 12px; padding: 20px; cursor: pointer; transition: 0.3s; position: relative; user-select: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .file-card:hover { border-color: #333333; transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
+        .file-card.selected { border-color: var(--accent-gold); background: rgba(212, 175, 55, 0.05); }
+        
+        .file-checkbox { position: absolute; top: 20px; left: 20px; accent-color: var(--accent-gold); transform: scale(1.5); cursor: pointer; z-index: 5; }
+        .file-icon { text-align: center; font-size: 55px; color: #1f1f22; margin: 20px 0; transition: 0.3s; }
+        .file-card.selected .file-icon { color: rgba(212, 175, 55, 0.5); }
+        .file-name { font-size: 15px; color: var(--text-light); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 12px; font-weight: 700; }
+        
+        .card-controls { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; background: #000000; padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
+        .size-badge { color: var(--accent-gold); font-size: 13px; font-weight: 800; text-align: center; background: rgba(212, 175, 55, 0.1); padding: 6px; border-radius: 6px; }
+        .qty-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .qty-row label { font-size: 11px; font-weight: 800; color: #71717a; }
+        .qty-input { width: 60px !important; padding: 6px !important; text-align: center; font-weight: 800; background: #111111 !important; border-color: #333 !important; }
+        .btn-edit-dim { width: 100%; background: transparent; border: 1px solid #333; color: #a1a1aa; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-edit-dim:hover { background: #111; color: white; border-color: #555; }
+
+        /* Full Screen RIP Workspace */
+        .fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #050505; z-index: 9999; display: none; flex-direction: column; }
+        .fs-toolbar { min-height: 75px; background: #0a0a0a; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 10px 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.8); z-index: 10; flex-wrap: wrap; gap: 15px; }
+        .fs-title { color: var(--accent-gold); font-weight: 900; font-size: 20px; display: flex; align-items: center; gap: 15px; letter-spacing: 1px; text-transform: uppercase; }
+        .fs-stats { display: flex; gap: 20px; font-size: 14px; background: #000; padding: 12px 20px; border-radius: 10px; border: 1px solid #222; align-items: center; flex-wrap: wrap; }
+        .fs-stats div { border-right: 1px solid #222; padding-right: 20px; color: #a1a1aa; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+        .fs-stats div:last-child { border: none; padding-right: 0; }
+        .fs-stats span { display: block; color: var(--text-light); font-weight: 800; font-size: 16px; margin-top: 4px; }
+        .fs-stats span.highlight { color: #10b981; }
+        
+        .export-group { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        .export-select { background: #000; color: white; border: 1px solid #333; padding: 12px; border-radius: 8px; outline: none; font-size: 13px; font-weight: 600; }
+        .btn-export { background: #10b981; color: #000; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; display: flex; align-items: center; gap: 8px; font-size: 13px; text-transform: uppercase; }
+        .btn-export:hover { background: #059669; }
+        .btn-close { background: #ef4444; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 13px; text-transform: uppercase; }
+
+        .canvas-wrapper { flex: 1; overflow: auto; padding: 40px; display: flex; justify-content: center; align-items: flex-start; background: #0f0f11; }
+        #nestCanvas { background: #ffffff; box-shadow: 0 30px 60px rgba(0,0,0,0.9); max-width: 100%; height: auto; } 
+
+        /* Dimensions Edit Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .modal-content { background: #0a0a0a; border: 1px solid var(--border); width: 90%; max-width: 360px; padding: 35px; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
+        .modal-content h3 { color: var(--accent-gold); font-size: 18px; margin-bottom: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .modal-actions { display: flex; gap: 15px; margin-top: 30px; }
+        .modal-actions button { flex: 1; padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 800; font-size: 14px; text-transform: uppercase; }
+        .btn-cancel { background: #222; color: white; }
+
+        /* =========================================
+           📱 MOBILE RESPONSIVE FIXES (የስልክ ስክሪን ማስተካከያ)
+           ========================================= */
+        @media (max-width: 850px) {
+            body { overflow: auto; height: auto; }
+            .workspace { flex-direction: column; overflow: visible; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); overflow-y: visible; flex-shrink: 1; }
+            .main-area { flex: none; overflow-y: visible; min-height: 500px; }
+            .top-bar { flex-direction: column; padding: 15px; gap: 10px; text-align: center; }
+            .area-header { flex-direction: column; align-items: flex-start; }
+            .search-box { width: 100%; }
+            .file-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); padding: 15px; gap: 15px; }
+            .file-card { padding: 15px; }
+            .file-icon { font-size: 40px; }
+            .fs-toolbar { flex-direction: column; padding: 15px; gap: 15px; align-items: flex-start; }
+            .fs-stats { width: 100%; justify-content: flex-start; }
+            .fs-stats div { border: none; padding-right: 10px; margin-bottom: 5px; }
+            .export-group { width: 100%; justify-content: space-between; }
+            .export-select { flex: 1; }
+            .canvas-wrapper { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="brand"><i class="fa-solid fa-crown"></i> AK BANNER <span>NEST</span></div>
+        <div class="server-status" id="serverStatus"><i class="fa-solid fa-satellite-dish"></i> RIP SERVER LINKED</div>
+    </div>
+
+    <div class="workspace">
+        <div class="sidebar">
+            <div class="panel-section">
+                <div class="panel-title"><i class="fa-regular fa-calendar-days"></i> Daily Logs</div>
+                <div class="folder-list" id="folderList"></div>
+            </div>
+
+            <div class="panel-section">
+                <div class="panel-title"><i class="fa-solid fa-gears"></i> Production Rules</div>
+                <div class="form-group">
+                    <label>Media Profile (Cost Estimator)</label>
+                    <select id="materialType" onchange="updateRollOptions()">
+                        <option value="banner">Star Flex Banner (350 ETB/m²)</option>
+                        <option value="sticker">Glossy Vinyl Sticker (450 ETB/m²)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Roll Feed Width</label>
+                    <select id="rollSize"></select>
+                </div>
+                <div class="form-group">
+                    <label>Bleed / Print Gap (cm)</label>
+                    <input type="number" id="gapSize" value="2" min="0">
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 12px; margin-top: 25px; background: #111; padding: 12px; border-radius: 8px; border: 1px solid #222;">
+                    <input type="checkbox" id="allowRotation" checked style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent-gold);">
+                    <label for="allowRotation" style="margin-bottom: 0; cursor: pointer; color: var(--text-light); text-transform: none; letter-spacing: 0;">Smart Auto-Rotation</label>
+                </div>
+            </div>
+
+            <div class="panel-section" style="border-bottom: none; margin-top: auto;">
+                <button class="btn-primary" onclick="startRIPEngine()">
+                    <i class="fa-solid fa-bolt"></i> Generate RIP Layout
+                </button>
+            </div>
+        </div>
+
+        <div class="main-area">
+            <div class="area-header">
+                <h2 id="currentFolderName">Asset Directory</h2>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchBar" placeholder="Search filename..." oninput="filterFiles()">
+                </div>
+            </div>
+            <div class="file-grid" id="fileGrid"></div>
+        </div>
+    </div>
+
+    <div class="fullscreen-overlay" id="fullscreenWorkspace">
+        <div class="fs-toolbar">
+            <div class="fs-title"><i class="fa-solid fa-chess-board"></i> Master RIP Layout</div>
+            <div class="fs-stats" id="nestStats"></div>
+            
+            <div class="export-group">
+                <select class="export-select" id="exportFormat">
+                    <option value="png">Lossless High-Res PNG</option>
+                    <option value="jpg">Standard Quality JPG</option>
+                    <option value="pdf">Production PDF</option>
+                </select>
+                <button class="btn-export" onclick="executeRIPExport()">
+                    <i class="fa-solid fa-download"></i> Export Final
+                </button>
+                <button class="btn-close" onclick="closeFullscreenEngine()">Close</button>
+            </div>
+        </div>
+        <div class="canvas-wrapper">
+            <canvas id="nestCanvas"></canvas>
+        </div>
+    </div>
+
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h3>Modify Dimensions</h3>
+            <p id="modalFileName" style="font-size: 12px; margin-bottom: 25px; color: #a1a1aa; word-break: break-all;"></p>
+            <div class="form-group">
+                <label>Width Size (cm)</label>
+                <input type="number" id="editW">
+            </div>
+            <div class="form-group">
+                <label>Height Size (cm)</label>
+                <input type="number" id="editH">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="document.getElementById('editModal').style.display='none'">Abort</button>
+                <button class="btn-primary" style="flex: 1;" onclick="applyDimensionModifications()">Update Spec</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://wubet-print-api.onrender.com/api/files';
+        let globalFilesArray = [];
+        let folderSegmentationMap = {};
+        let currentSelectedDirectory = '';
+
+        const PRICING_RATES = { banner: 350, sticker: 450 };
+
+        function updateRollOptions() {
+            const material = document.getElementById('materialType').value;
+            const rollSelect = document.getElementById('rollSize');
+            rollSelect.innerHTML = material === 'banner' 
+                ? `<option value="200">2.0M Roll (200cm)</option><option value="300">3.0M Roll (300cm)</option>`
+                : `<option value="107">1.07M Roll (107cm)</option><option value="127">1.27M Roll (127cm)</option><option value="152">1.52M Roll (152cm)</option>`;
+        }
+        updateRollOptions();
+
+        async function fetchSystemWorkspace() {
+            try {
+                const res = await fetch(API_URL);
+                if(!res.ok) throw new Error();
+                globalFilesArray = await res.json();
+                
+                globalFilesArray = globalFilesArray.map(file => ({
+                    ...file,
+                    qty: 1,
+                    selected: false
+                }));
+
+                groupAssetsByDirectory();
+            } catch (err) {
+                document.getElementById('serverStatus').innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> SYSTEM OFFLINE';
+            }
+        }
+
+        function groupAssetsByDirectory() {
+            folderSegmentationMap = {};
+            globalFilesArray.forEach((file, idx) => {
+                const folderName = file.folder || 'Unclassified';
+                if(!folderSegmentationMap[folderName]) folderSegmentationMap[folderName] = [];
+                folderSegmentationMap[folderName].push({ ...file, index: idx });
+            });
+            renderDirectoryTree();
+        }
+
+        function renderDirectoryTree() {
+            const list = document.getElementById('folderList');
+            list.innerHTML = '';
+            const sortedFolders = Object.keys(folderSegmentationMap).sort().reverse();
+
+            if(sortedFolders.length === 0) {
+                list.innerHTML = '<div style="color:#52525b; font-size:12px; padding:10px;">No files found on server.</div>';
+                return;
+            }
+
+            sortedFolders.forEach(folder => {
+                const count = folderSegmentationMap[folder].length;
+                const div = document.createElement('div');
+                div.className = `folder-item ${currentSelectedDirectory === folder ? 'active' : ''}`;
+                div.innerHTML = `<span><i class="fa-regular fa-folder-open"></i> ${folder}</span> <span style="background:#000; font-size:12px; padding:3px 10px; border-radius:12px; font-weight:800;">${count}</span>`;
+                div.onclick = () => selectActiveDirectory(folder);
+                list.appendChild(div);
+            });
+
+            if(!currentSelectedDirectory && sortedFolders.length > 0) {
+                selectActiveDirectory(sortedFolders[0]);
+            }
+        }
+
+        function selectActiveDirectory(folder) {
+            currentSelectedDirectory = folder;
+            document.getElementById('currentFolderName').innerText = `Directory: /${folder}/`;
+            renderDirectoryTree();
+            renderActiveFileGrid(folderSegmentationMap[folder]);
+        }
+
+        function renderActiveFileGrid(files) {
+            const grid = document.getElementById('fileGrid');
+            grid.innerHTML = '';
+
+            files.forEach(file => {
+                const globalIdx = file.index;
+                const w = file.size.width;
+                const h = file.size.height;
+                
+                const card = document.createElement('div');
+                card.className = `file-card ${file.selected ? 'selected' : ''}`;
+                
+                card.onclick = function(e) {
+                    if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.className !== 'qty-btn') {
+                        const cb = this.querySelector('.file-checkbox');
+                        cb.checked = !cb.checked;
+                        toggleFileSelectionState(globalIdx, cb.checked, this);
+                    }
+                };
+
+                card.innerHTML = `
+                    <input type="checkbox" class="file-checkbox" ${file.selected ? 'checked' : ''} value="${globalIdx}" onclick="toggleFileSelectionState(${globalIdx}, this.checked, this.parentElement)">
+                    <div class="file-icon"><i class="fa-regular fa-image"></i></div>
+                    <div class="file-name" title="${file.name}">${file.name}</div>
+                    <div class="card-controls">
+                        <div class="size-badge" id="size-label-${globalIdx}">${w} x ${h} cm</div>
+                        <div class="qty-row">
+                            <label>COPIES</label>
+                            <input type="number" class="qty-input" min="1" value="${file.qty}" onchange="updateFileQuantityState(${globalIdx}, this.value)">
+                        </div>
+                        <button class="btn-edit-dim" onclick="openDimensionsEditorModal(${globalIdx}, '${file.name}', '${w}', '${h}')"><i class="fa-solid fa-pen-ruler"></i> Edit Size</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleFileSelectionState(idx, isChecked, element) {
+            globalFilesArray[idx].selected = isChecked;
+            element.classList.toggle('selected', isChecked);
+        }
+
+        function updateFileQuantityState(idx, val) {
+            globalFilesArray[idx].qty = parseInt(val) || 1;
+        }
+
+        function filterFiles() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            const currentFolderFiles = folderSegmentationMap[currentSelectedDirectory] || [];
+            const filtered = currentFolderFiles.filter(f => f.name.toLowerCase().includes(query));
+            renderActiveFileGrid(filtered);
+        }
+
+        let workingModalGlobalIndex = -1;
+        function openDimensionsEditorModal(idx, name, w, h) {
+            workingModalGlobalIndex = idx;
+            document.getElementById('modalFileName').innerText = name;
+            document.getElementById('editW').value = w === '?' ? '' : w;
+            document.getElementById('editH').value = h === '?' ? '' : h;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function applyDimensionModifications() {
+            const w = document.getElementById('editW').value;
+            const h = document.getElementById('editH').value;
+            if(!w || !h) return;
+            
+            globalFilesArray[workingModalGlobalIndex].size.width = parseInt(w);
+            globalFilesArray[workingModalGlobalIndex].size.height = parseInt(h);
+            
+            document.getElementById('editModal').style.display = 'none';
+            groupAssetsByDirectory(); 
+            selectActiveDirectory(currentSelectedDirectory);
+        }
+
+        function startRIPEngine() {
+            const activeSelections = globalFilesArray.filter(f => f.selected);
+            if(activeSelections.length === 0) return alert('No files selected for processing.');
+
+            const rollWidth = parseInt(document.getElementById('rollSize').value);
+            const gap = parseInt(document.getElementById('gapSize').value) || 0;
+            const allowRot = document.getElementById('allowRotation').checked;
+            const activeMaterial = document.getElementById('materialType').value;
+
+            let processingPool = [];
+            
+            activeSelections.forEach(file => {
+                for(let k = 0; k < file.qty; k++) {
+                    let w = parseInt(file.size.width);
+                    let h = parseInt(file.size.height);
+                    
+                    if(isNaN(w) || isNaN(h)) {
+                        alert(`File Error: ${file.name} lacks valid dimensions.`);
+                        return;
+                    }
+
+                    if(allowRot && w > h && w > rollWidth && h <= rollWidth) {
+                        let temp = w; w = h; h = temp;
+                    } else if(allowRot && h > w && h <= rollWidth && (w + gap) > (h + gap)) {
+                        let temp = w; w = h; h = temp;
+                    }
+
+                    processingPool.push({ name: file.name, w: w, h: h });
+                }
+            });
+
+            processingPool.sort((a,b) => b.h - a.h);
+
+            let cx = 0, cy = 0, currentRowHeight = 0;
+            let combinedAssetArea = 0;
+
+            processingPool.forEach(item => {
+                const allocationW = item.w + gap;
+                const allocationH = item.h + gap;
+
+                if(cx + allocationW > rollWidth) {
+                    cy += currentRowHeight;
+                    cx = 0;
+                    currentRowHeight = 0;
+                }
+                
+                item.x = cx;
+                item.y = cy;
+                
+                if(allocationH > currentRowHeight) currentRowHeight = allocationH;
+                cx += allocationW;
+
+                combinedAssetArea += (item.w * item.h); 
+            });
+
+            const totalRequiredLength = cy + currentRowHeight;
+            const totalRollUsedArea = rollWidth * totalRequiredLength;
+            
+            const performanceEfficiency = totalRollUsedArea > 0 ? ((combinedAssetArea / totalRollUsedArea) * 100).toFixed(1) : 0;
+            const totalSquareMeters = (totalRollUsedArea / 10000).toFixed(2);
+            const overallCostEstimation = (totalSquareMeters * PRICING_RATES[activeMaterial]).toFixed(2);
+
+            const scale = 10; 
+            const canvas = document.getElementById('nestCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = rollWidth * scale;
+            canvas.height = totalRequiredLength * scale;
+            
+            ctx.fillStyle = '#ffffff'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            processingPool.forEach(item => {
+                const rx = item.x * scale, ry = item.y * scale;
+                const rw = item.w * scale, rh = item.h * scale;
+
+                ctx.fillStyle = 'rgba(212, 175, 55, 0.05)';
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 4;
+                ctx.fillRect(rx, ry, rw, rh);
+                ctx.strokeRect(rx, ry, rw, rh);
+
+                ctx.beginPath();
+                ctx.moveTo(rx, ry);
+                ctx.lineTo(rx + rw, ry + rh);
+                ctx.moveTo(rx + rw, ry);
+                ctx.lineTo(rx, ry + rh);
+                ctx.strokeStyle = 'rgba(212, 175, 55, 0.1)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 36px Segoe UI'; 
+                ctx.fillText(`${item.w} x ${item.h} cm`, rx + 25, ry + 55);
+                
+                ctx.fillStyle = '#555555';
+                ctx.font = 'bold 24px Segoe UI';
+                const optimizedName = item.name.length > 30 ? item.name.substring(0,30)+'...' : item.name;
+                ctx.fillText(optimizedName, rx + 25, ry + 100);
+            });
+
+            document.getElementById('nestStats').innerHTML = `
+                <div>Length Required<br><span>${totalRequiredLength} cm</span></div>
+                <div>Substrate Area<br><span>${totalSquareMeters} m²</span></div>
+                <div>Efficiency<br><span class="${performanceEfficiency > 80 ? 'highlight' : ''}">${performanceEfficiency}%</span></div>
+                <div>Est. Base Cost<br><span style="color:var(--accent-gold);">${overallCostEstimation} ETB</span></div>
+            `;
+
+            document.getElementById('fullscreenWorkspace').style.display = 'flex';
+        }
+
+        function executeRIPExport() {
+            const format = document.getElementById('exportFormat').value;
+            const canvas = document.getElementById('nestCanvas');
+            const timestamp = new Date().toISOString().split('T')[0];
+            const exportedFileName = `AK_BANNER_RIP_${timestamp}`;
+
+            if(format === 'png' || format === 'jpg') {
+                const anchor = document.createElement('a');
+                anchor.download = `${exportedFileName}.${format}`;
+                anchor.href = canvas.toDataURL(`image/${format === 'jpg' ? 'jpeg' : 'png'}`, 1.0);
+                anchor.click();
+            } else if(format === 'pdf') {
+                const { jsPDF } = window.jspdf;
+                const documentPDF = new jsPDF({
+                    orientation: canvas.width > canvas.height ? 'l' : 'p',
+                    unit: 'px',
+                    format: [canvas.width, canvas.height]
+                });
+                documentPDF.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', 0, 0, canvas.width, canvas.height);
+                documentPDF.save(`${exportedFileName}.pdf`);
+            }
+        }
+
+        function closeFullscreenEngine() {
+            document.getElementById('fullscreenWorkspace').style.display = 'none';
+        }
+
+        window.onload = fetchSystemWorkspace;
+    </script>
+</body>
+</html>
