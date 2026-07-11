@@ -1,456 +1,514 @@
 <!DOCTYPE html>
-<html lang="am">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wubet Printing - የህትመት ማቀናጃ ዳሽቦርድ</title>
+    <title>AK BANNER NEST | Ultimate RIP Suite</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* Pure Aristocratic Black Theme */
+        :root {
+            --bg-dark: #000000; --bg-panel: #0a0a0a; --bg-header: #050505;
+            --accent: #2563eb; --accent-hover: #1d4ed8; --accent-gold: #d4af37;
+            --text-main: #e4e4e7; --text-light: #ffffff; --border: #1f1f22;
         }
 
-        body {
-            background-color: #f1f5f9;
-            color: #1e293b;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        /* Header ዲዛይን */
-        header {
-            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-            color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
+        /* Top Bar */
+        .top-bar { background-color: var(--bg-header); height: 55px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 10; }
+        .brand { color: var(--text-light); font-weight: 800; font-size: 20px; letter-spacing: 2px; display: flex; align-items: center; gap: 12px; }
+        .brand span { color: var(--accent-gold); }
+        .server-status { font-size: 12px; font-weight: 700; background: rgba(16, 185, 129, 0.05); padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
 
-        header h1 {
-            font-size: 24px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        /* Workspace */
+        .workspace { display: flex; flex: 1; overflow: hidden; }
 
-        .server-status {
-            background-color: rgba(255, 255, 255, 0.2);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        /* Sidebar */
+        .sidebar { width: 340px; background-color: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+        .panel-section { padding: 25px; border-bottom: 1px solid var(--border); }
+        .panel-title { font-size: 12px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 18px; font-weight: 800; letter-spacing: 1.5px; display: flex; align-items: center; gap: 8px; }
+        
+        /* Folders List */
+        .folder-list { display: flex; flex-direction: column; gap: 8px; }
+        .folder-item { padding: 12px 15px; background: #111111; border-radius: 8px; cursor: pointer; font-size: 13px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); transition: 0.2s; font-weight: 600; }
+        .folder-item:hover { border-color: #333333; }
+        .folder-item.active { background: rgba(212, 175, 55, 0.1); border-color: var(--accent-gold); color: var(--accent-gold); }
+        .folder-item.active span:last-child { background: var(--accent-gold); color: #000; }
+        
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 12px; margin-bottom: 8px; color: #a1a1aa; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group select, .form-group input { width: 100%; background: #000000; color: var(--text-light); border: 1px solid var(--border); padding: 12px; border-radius: 8px; outline: none; font-size: 14px; transition: 0.2s; }
+        .form-group select:focus, .form-group input:focus { border-color: var(--accent-gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.1); }
+        
+        .btn-primary { width: 100%; background: linear-gradient(45deg, var(--accent-gold), #b8860b); color: #000000; border: none; padding: 16px; border-radius: 8px; cursor: pointer; font-weight: 800; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); }
 
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background-color: #10b981;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
+        /* Main Area */
+        .main-area { flex: 1; display: flex; flex-direction: column; background-color: var(--bg-dark); }
+        .area-header { padding: 20px 35px; border-bottom: 1px solid var(--border); background: var(--bg-panel); display: flex; justify-content: space-between; align-items: center; }
+        .area-header h2 { font-size: 18px; font-weight: 700; color: var(--text-light); }
+        
+        .search-box { position: relative; width: 280px; }
+        .search-box input { width: 100%; background: #000000; border: 1px solid var(--border); padding: 10px 15px 10px 40px; border-radius: 8px; color: white; font-size: 13px; outline: none; transition: 0.2s; }
+        .search-box input:focus { border-color: var(--accent-gold); }
+        .search-box i { position: absolute; left: 15px; top: 12px; color: #71717a; font-size: 14px; }
 
-        /* ዋናው ገጽታ (Main Content) */
-        main {
-            max-width: 1400px;
-            width: 100%;
-            margin: 30px auto;
-            padding: 0 20px;
-            flex: 1;
-        }
+        .file-grid { flex: 1; padding: 35px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; align-content: flex-start; }
+        .file-card { background: #0a0a0a; border: 1px solid var(--border); border-radius: 12px; padding: 20px; cursor: pointer; transition: 0.3s; position: relative; user-select: none; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .file-card:hover { border-color: #333333; transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.5); }
+        .file-card.selected { border-color: var(--accent-gold); background: rgba(212, 175, 55, 0.05); }
+        
+        .file-checkbox { position: absolute; top: 20px; left: 20px; accent-color: var(--accent-gold); transform: scale(1.5); cursor: pointer; z-index: 5; }
+        .file-icon { text-align: center; font-size: 55px; color: #1f1f22; margin: 20px 0; transition: 0.3s; }
+        .file-card.selected .file-icon { color: rgba(212, 175, 55, 0.5); }
+        .file-name { font-size: 15px; color: var(--text-light); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 12px; font-weight: 700; }
+        
+        .card-controls { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; background: #000000; padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
+        .size-badge { color: var(--accent-gold); font-size: 13px; font-weight: 800; text-align: center; background: rgba(212, 175, 55, 0.1); padding: 6px; border-radius: 6px; }
+        .qty-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .qty-row label { font-size: 11px; font-weight: 800; color: #71717a; }
+        .qty-input { width: 60px !important; padding: 6px !important; text-align: center; font-weight: 800; background: #111111 !important; border-color: #333 !important; }
+        .btn-edit-dim { width: 100%; background: transparent; border: 1px solid #333; color: #a1a1aa; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-edit-dim:hover { background: #111; color: white; border-color: #555; }
 
-        /* የቁጥጥር እና ማቀናጃ ባር (Control Bar) */
-        .control-bar {
-            background-color: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+        /* Full Screen RIP Workspace */
+        .fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #050505; z-index: 9999; display: none; flex-direction: column; }
+        .fs-toolbar { height: 75px; background: #0a0a0a; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.8); z-index: 10; }
+        .fs-title { color: var(--accent-gold); font-weight: 900; font-size: 22px; display: flex; align-items: center; gap: 15px; letter-spacing: 1px; text-transform: uppercase; }
+        .fs-stats { display: flex; gap: 30px; font-size: 14px; background: #000; padding: 12px 25px; border-radius: 10px; border: 1px solid #222; align-items: center; }
+        .fs-stats div { border-right: 1px solid #222; padding-right: 25px; color: #a1a1aa; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+        .fs-stats div:last-child { border: none; padding-right: 0; }
+        .fs-stats span { display: block; color: var(--text-light); font-weight: 800; font-size: 16px; margin-top: 4px; }
+        .fs-stats span.highlight { color: #10b981; }
+        
+        .export-group { display: flex; gap: 15px; align-items: center; }
+        .export-select { background: #000; color: white; border: 1px solid #333; padding: 12px 20px; border-radius: 8px; outline: none; font-size: 14px; font-weight: 600; }
+        .btn-export { background: #10b981; color: #000; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 800; display: flex; align-items: center; gap: 10px; font-size: 14px; text-transform: uppercase; }
+        .btn-export:hover { background: #059669; }
+        .btn-close { background: #ef4444; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 14px; text-transform: uppercase; }
 
-        .roll-selector {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .canvas-wrapper { flex: 1; overflow: auto; padding: 60px; display: flex; justify-content: center; align-items: flex-start; background: #0f0f11; }
+        /* The Canvas visually scaled for screen, but internally massive for export */
+        #nestCanvas { background: #ffffff; box-shadow: 0 30px 60px rgba(0,0,0,0.9); transform-origin: top center; max-width: 100%; height: auto; } 
 
-        .roll-selector label {
-            font-weight: 500;
-            color: #475569;
-        }
-
-        .roll-selector select {
-            padding: 8px 16px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            outline: none;
-            font-size: 15px;
-            background-color: #f8fafc;
-        }
-
-        .btn-nest {
-            background-color: #10b981;
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-nest:hover {
-            background-color: #059669;
-            transform: translateY(-1px);
-        }
-
-        /* የፋይሎች መደርደሪያ ግሪድ (File Grid) */
-        .file-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-        }
-
-        /* የፋይል ካርድ ዲዛይን (File Card) */
-        .file-card {
-            background-color: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative;
-        }
-
-        .file-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-image {
-            height: 180px;
-            background-color: #f8fafc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .placeholder-icon {
-            font-size: 64px;
-            color: #94a3b8;
-        }
-
-        .select-file {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            width: 22px;
-            height: 22px;
-            cursor: pointer;
-            accent-color: #3b82f6;
-        }
-
-        .card-details {
-            padding: 20px;
-        }
-
-        .file-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 8px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .file-size {
-            font-size: 14px;
-            color: #64748b;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-edit-size {
-            width: 100%;
-            background-color: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .btn-edit-size:hover {
-            background-color: #e2e8f0;
-            color: #1e293b;
-        }
-
-        /* የኢረር እና ሎዲንግ መልዕክቶች */
-        .loading-text, .error-text {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 40px;
-            font-size: 16px;
-            color: #64748b;
-        }
-
-        .error-text {
-            color: #ef4444;
-        }
-
-        /* ፖፕአፕ ሞዳል (Edit Size Modal) */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-
-        .modal-content h2 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: #1e293b;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 14px;
-            margin-bottom: 6px;
-            color: #475569;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            outline: none;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .btn-cancel {
-            background-color: #e2e8f0;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .btn-save {
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.5; }
-        }
+        /* Dimensions Edit Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); }
+        .modal-content { background: #0a0a0a; border: 1px solid var(--border); width: 360px; padding: 35px; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.8); }
+        .modal-content h3 { color: var(--accent-gold); font-size: 18px; margin-bottom: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .modal-actions { display: flex; gap: 15px; margin-top: 30px; }
+        .modal-actions button { flex: 1; padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 800; font-size: 14px; text-transform: uppercase; }
+        .btn-cancel { background: #222; color: white; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1><i class="fa-solid fa-print"></i> Wubet Printing</h1>
-        <div class="server-status">
-            <div class="status-dot"></div>
-            <span>Cloud Server Connected</span>
-        </div>
-    </header>
+    <div class="top-bar">
+        <div class="brand"><i class="fa-solid fa-crown"></i> AK BANNER <span>NEST</span></div>
+        <div class="server-status" id="serverStatus"><i class="fa-solid fa-satellite-dish"></i> RIP SERVER LINKED</div>
+    </div>
 
-    <main>
-        <div class="control-bar">
-            <div class="roll-selector">
-                <label for="rollSize"><i class="fa-solid fa-scroll"></i> የሮል ሳይዝ (Roll Width):</label>
-                <select id="rollSize">
-                    <option value="200">2 ሜትር (200cm)</option>
-                    <option value="300">3 ሜትር (300cm)</option>
-                </select>
+    <div class="workspace">
+        <div class="sidebar">
+            <div class="panel-section">
+                <div class="panel-title"><i class="fa-regular fa-calendar-days"></i> Daily Logs</div>
+                <div class="folder-list" id="folderList"></div>
             </div>
-            <button class="btn-nest" onclick="startNesting()"><i class="fa-solid fa-layer-group"></i> አንድ ላይ አቀናጅ (Nest)</button>
+
+            <div class="panel-section">
+                <div class="panel-title"><i class="fa-solid fa-gears"></i> Production Rules</div>
+                <div class="form-group">
+                    <label>Media Profile (Cost Estimator)</label>
+                    <select id="materialType" onchange="updateRollOptions()">
+                        <option value="banner">Star Flex Banner (350 ETB/m²)</option>
+                        <option value="sticker">Glossy Vinyl Sticker (450 ETB/m²)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Roll Feed Width</label>
+                    <select id="rollSize"></select>
+                </div>
+                <div class="form-group">
+                    <label>Bleed / Print Gap (cm)</label>
+                    <input type="number" id="gapSize" value="2" min="0">
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 12px; margin-top: 25px; background: #111; padding: 12px; border-radius: 8px; border: 1px solid #222;">
+                    <input type="checkbox" id="allowRotation" checked style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--accent-gold);">
+                    <label for="allowRotation" style="margin-bottom: 0; cursor: pointer; color: var(--text-light); text-transform: none; letter-spacing: 0;">Smart Auto-Rotation</label>
+                </div>
+            </div>
+
+            <div class="panel-section" style="border-bottom: none; margin-top: auto;">
+                <button class="btn-primary" onclick="startRIPEngine()">
+                    <i class="fa-solid fa-bolt"></i> Generate RIP Layout
+                </button>
+            </div>
         </div>
 
-        <div class="file-grid" id="fileGrid">
-            <div class="loading-text"><i class="fa-solid fa-spinner fa-spin"></i> ፋይሎችን ከክላውድ ላይ በመጫን ላይ...</div>
+        <div class="main-area">
+            <div class="area-header">
+                <h2 id="currentFolderName">Asset Directory</h2>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchBar" placeholder="Search filename..." oninput="filterFiles()">
+                </div>
+            </div>
+            <div class="file-grid" id="fileGrid"></div>
         </div>
-    </main>
+    </div>
+
+    <div class="fullscreen-overlay" id="fullscreenWorkspace">
+        <div class="fs-toolbar">
+            <div class="fs-title"><i class="fa-solid fa-chess-board"></i> Master RIP Layout</div>
+            <div class="fs-stats" id="nestStats"></div>
+            
+            <div class="export-group">
+                <select class="export-select" id="exportFormat">
+                    <option value="png">Lossless High-Res PNG</option>
+                    <option value="jpg">Standard Quality JPG</option>
+                    <option value="pdf">Production PDF</option>
+                </select>
+                <button class="btn-export" onclick="executeRIPExport()">
+                    <i class="fa-solid fa-download"></i> Export Final
+                </button>
+                <button class="btn-close" onclick="closeFullscreenEngine()">Close</button>
+            </div>
+        </div>
+        <div class="canvas-wrapper">
+            <canvas id="nestCanvas"></canvas>
+        </div>
+    </div>
 
     <div class="modal" id="editModal">
         <div class="modal-content">
-            <h2 id="modalFileName">సైజ్ አስተካክል</h2>
-            <div class="input-group">
-                <label>ወርድ (Width in cm)</label>
-                <input type="number" id="editWidth">
+            <h3>Modify Dimensions</h3>
+            <p id="modalFileName" style="font-size: 12px; margin-bottom: 25px; color: #a1a1aa; word-break: break-all;"></p>
+            <div class="form-group">
+                <label>Width Size (cm)</label>
+                <input type="number" id="editW">
             </div>
-            <div class="input-group">
-                <label>ቁመት (Height in cm)</label>
-                <input type="number" id="editHeight">
+            <div class="form-group">
+                <label>Height Size (cm)</label>
+                <input type="number" id="editH">
             </div>
             <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeEditModal()">ተው</button>
-                <button class="btn-save" onclick="saveNewSize()">ሴቭ አድርግ</button>
+                <button class="btn-cancel" onclick="document.getElementById('editModal').style.display='none'">Abort</button>
+                <button class="btn-primary" style="flex: 1;" onclick="applyDimensionModifications()">Update Spec</button>
             </div>
         </div>
     </div>
 
     <script>
-        // 👇 ያንተ አዲሱ የ Render ክላውድ ሰርቨር ሊንክ እዚህ ገብቷል!
         const API_URL = 'https://wubet-print-api.onrender.com/api/files';
+        let globalFilesArray = [];
+        let folderSegmentationMap = {};
+        let currentSelectedDirectory = '';
 
-        // ከ Render ሰርቨር ላይ ፋይሎችን አምጥቶ ስክሪን ላይ የሚደረድር ፈንክሽን
-        async function loadFiles() {
-            const fileGrid = document.getElementById('fileGrid');
-            
+        const PRICING_RATES = { banner: 350, sticker: 450 };
+
+        function updateRollOptions() {
+            const material = document.getElementById('materialType').value;
+            const rollSelect = document.getElementById('rollSize');
+            rollSelect.innerHTML = material === 'banner' 
+                ? `<option value="200">2.0M Roll (200cm)</option><option value="300">3.0M Roll (300cm)</option>`
+                : `<option value="107">1.07M Roll (107cm)</option><option value="127">1.27M Roll (127cm)</option><option value="152">1.52M Roll (152cm)</option>`;
+        }
+        updateRollOptions();
+
+        async function fetchSystemWorkspace() {
             try {
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error('Network response was not ok');
+                const res = await fetch(API_URL);
+                if(!res.ok) throw new Error();
+                globalFilesArray = await res.json();
                 
-                const files = await response.json();
-                fileGrid.innerHTML = ''; // የነበረውን የሎዲንግ ፅሁፍ ማጥፊያ
+                globalFilesArray = globalFilesArray.map(file => ({
+                    ...file,
+                    qty: 1,
+                    selected: false
+                }));
 
-                // ምንም ፋይል ከሌለ
-                if (files.length === 0) {
-                    fileGrid.innerHTML = `
-                        <div class="loading-text">
-                            <i class="fa-regular fa-folder-open" style="font-size: 48px; display:block; margin-bottom:10px;"></i>
-                            ምንም አዲስ ትዕዛዝ አልተገኘም። እባክዎ በቴሌግራም ቦት ፋይል ይላኩ።
-                        </div>`;
-                    return;
-                }
-
-                // ፋይሎቹን አንድ በአንድ ካርድ እየሰራን በግሪዱ ውስጥ እናስቀምጣለን
-                files.forEach(file => {
-                    const card = document.createElement('div');
-                    card.className = 'file-card';
-                    card.innerHTML = `
-                        <div class="card-image">
-                            <input type="checkbox" class="select-file" value="${file.name}" title="ለማቀናጀት ምረጥ">
-                            <i class="fa-solid fa-file-image placeholder-icon"></i>
-                        </div>
-                        <div class="card-details">
-                            <h3 class="file-name" title="${file.name}">${file.name}</h3>
-                            <p class="file-size">
-                                <i class="fa-solid fa-maximize"></i> 
-                                <span class="size-text">${file.size.width}cm x ${file.size.height}cm</span>
-                            </p>
-                            <button class="btn-edit-size" onclick="openEditModal('${file.name}', '${file.size.width}', '${file.size.height}')">
-                                <i class="fa-solid fa-pen-to-square"></i> Edit Size
-                            </button>
-                        </div>
-                    `;
-                    fileGrid.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error('Error fetching files:', error);
-                fileGrid.innerHTML = `
-                    <div class="error-text">
-                        <i class="fa-solid fa-triangle-exclamation" style="font-size: 40px; display:block; margin-bottom:10px;"></i>
-                        ከሰርቨር ጋር መገናኘት አልተቻለም! <br>
-                        <small style="color: #64748b;">Render ሰርቨሩ መነሳቱን ወይም ሊንኩ በትክክል መፃፉን ያረጋግጡ።</small>
-                    </div>`;
+                groupAssetsByDirectory();
+            } catch (err) {
+                document.getElementById('serverStatus').innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;"></i> SYSTEM OFFLINE';
             }
         }
 
-        // --- የፖፕአፕ ሞዳል ፈንክሽኖች ---
-        let currentEditingFile = '';
-
-        function openEditModal(name, width, height) {
-            currentEditingFile = name;
-            document.getElementById('modalFileName').innerText = name;
-            document.getElementById('editWidth').value = width === '?' ? '' : width;
-            document.getElementById('editHeight').value = height === '?' ? '' : height;
-            document.getElementById('editModal').style.display = 'flex';
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
-        }
-
-        function saveNewSize() {
-            const newWidth = document.getElementById('editWidth').value;
-            const newHeight = document.getElementById('editHeight').value;
-            
-            alert(`የፋይል ስም: ${currentEditingFile}\nአዲስ ሳይዝ: ${newWidth}cm x ${newHeight}cm\n\n(ማስታወሻ: የሳይዝ ማስተካከያ ሎጂክ በቀጣይ ከ Nesting ጋር ሙሉ በሙሉ ይገናኛል)`);
-            closeEditModal();
-        }
-
-        // --- የማቀናጃ (Nesting) ቴስት ፈንክሽን ---
-        function startNesting() {
-            const selectedFiles = [];
-            const checkboxes = document.querySelectorAll('.select-file:checked');
-            
-            checkboxes.forEach(cb => {
-                selectedFiles.push(cb.value);
+        function groupAssetsByDirectory() {
+            folderSegmentationMap = {};
+            globalFilesArray.forEach((file, idx) => {
+                const folderName = file.folder || 'Unclassified';
+                if(!folderSegmentationMap[folderName]) folderSegmentationMap[folderName] = [];
+                folderSegmentationMap[folderName].push({ ...file, index: idx });
             });
+            renderDirectoryTree();
+        }
 
-            if (selectedFiles.length === 0) {
-                alert('እባክዎ መጀመሪያ ማቀናጀት የሚፈልጓቸውን ፋይሎች በካርዱ ላይ ካለው ሳጥን (Checkbox) ውስጥ ይምረጡ!');
+        function renderDirectoryTree() {
+            const list = document.getElementById('folderList');
+            list.innerHTML = '';
+            const sortedFolders = Object.keys(folderSegmentationMap).sort().reverse();
+
+            if(sortedFolders.length === 0) {
+                list.innerHTML = '<div style="color:#52525b; font-size:12px; padding:10px;">No files found on server.</div>';
                 return;
             }
 
-            const roll = document.getElementById('rollSize').value;
-            alert(`የተመረጡ ፋይሎች ቁጥር: ${selectedFiles.length}\nየሮል ሳይዝ: ${roll}cm\n\nበጣም አሪፍ! አሁን ቀጣዩ ስራችን እነዚህን ፋይሎች በሮሉ ላይ የሚያቀናጀውን አልጎሪዝም መስራት ነው።`);
+            sortedFolders.forEach(folder => {
+                const count = folderSegmentationMap[folder].length;
+                const div = document.createElement('div');
+                div.className = `folder-item ${currentSelectedDirectory === folder ? 'active' : ''}`;
+                div.innerHTML = `<span><i class="fa-regular fa-folder-open"></i> ${folder}</span> <span style="background:#000; font-size:12px; padding:3px 10px; border-radius:12px; font-weight:800;">${count}</span>`;
+                div.onclick = () => selectActiveDirectory(folder);
+                list.appendChild(div);
+            });
+
+            if(!currentSelectedDirectory && sortedFolders.length > 0) {
+                selectActiveDirectory(sortedFolders[0]);
+            }
         }
 
-        // ገጹ ሲከፈት ራስሰር ፋይሎችን እንዲጭን
-        window.onload = loadFiles;
+        function selectActiveDirectory(folder) {
+            currentSelectedDirectory = folder;
+            document.getElementById('currentFolderName').innerText = `Directory: /${folder}/`;
+            renderDirectoryTree();
+            renderActiveFileGrid(folderSegmentationMap[folder]);
+        }
+
+        function renderActiveFileGrid(files) {
+            const grid = document.getElementById('fileGrid');
+            grid.innerHTML = '';
+
+            files.forEach(file => {
+                const globalIdx = file.index;
+                const w = file.size.width;
+                const h = file.size.height;
+                
+                const card = document.createElement('div');
+                card.className = `file-card ${file.selected ? 'selected' : ''}`;
+                
+                card.onclick = function(e) {
+                    if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.className !== 'qty-btn') {
+                        const cb = this.querySelector('.file-checkbox');
+                        cb.checked = !cb.checked;
+                        toggleFileSelectionState(globalIdx, cb.checked, this);
+                    }
+                };
+
+                card.innerHTML = `
+                    <input type="checkbox" class="file-checkbox" ${file.selected ? 'checked' : ''} value="${globalIdx}" onclick="toggleFileSelectionState(${globalIdx}, this.checked, this.parentElement)">
+                    <div class="file-icon"><i class="fa-regular fa-image"></i></div>
+                    <div class="file-name" title="${file.name}">${file.name}</div>
+                    <div class="card-controls">
+                        <div class="size-badge" id="size-label-${globalIdx}">${w} x ${h} cm</div>
+                        <div class="qty-row">
+                            <label>COPIES</label>
+                            <input type="number" class="qty-input" min="1" value="${file.qty}" onchange="updateFileQuantityState(${globalIdx}, this.value)">
+                        </div>
+                        <button class="btn-edit-dim" onclick="openDimensionsEditorModal(${globalIdx}, '${file.name}', '${w}', '${h}')"><i class="fa-solid fa-pen-ruler"></i> Edit Size</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleFileSelectionState(idx, isChecked, element) {
+            globalFilesArray[idx].selected = isChecked;
+            element.classList.toggle('selected', isChecked);
+        }
+
+        function updateFileQuantityState(idx, val) {
+            globalFilesArray[idx].qty = parseInt(val) || 1;
+        }
+
+        function filterFiles() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            const currentFolderFiles = folderSegmentationMap[currentSelectedDirectory] || [];
+            const filtered = currentFolderFiles.filter(f => f.name.toLowerCase().includes(query));
+            renderActiveFileGrid(filtered);
+        }
+
+        let workingModalGlobalIndex = -1;
+        function openDimensionsEditorModal(idx, name, w, h) {
+            workingModalGlobalIndex = idx;
+            document.getElementById('modalFileName').innerText = name;
+            document.getElementById('editW').value = w === '?' ? '' : w;
+            document.getElementById('editH').value = h === '?' ? '' : h;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function applyDimensionModifications() {
+            const w = document.getElementById('editW').value;
+            const h = document.getElementById('editH').value;
+            if(!w || !h) return;
+            
+            globalFilesArray[workingModalGlobalIndex].size.width = parseInt(w);
+            globalFilesArray[workingModalGlobalIndex].size.height = parseInt(h);
+            
+            document.getElementById('editModal').style.display = 'none';
+            groupAssetsByDirectory(); 
+            selectActiveDirectory(currentSelectedDirectory);
+        }
+
+        // ==========================================
+        // SUPER MASTER NESTING ALGORITHM (RIP ENGINE)
+        // ==========================================
+        function startRIPEngine() {
+            const activeSelections = globalFilesArray.filter(f => f.selected);
+            if(activeSelections.length === 0) return alert('No files selected for processing.');
+
+            const rollWidth = parseInt(document.getElementById('rollSize').value);
+            const gap = parseInt(document.getElementById('gapSize').value) || 0;
+            const allowRot = document.getElementById('allowRotation').checked;
+            const activeMaterial = document.getElementById('materialType').value;
+
+            let processingPool = [];
+            
+            // Expand QTY
+            activeSelections.forEach(file => {
+                for(let k = 0; k < file.qty; k++) {
+                    let w = parseInt(file.size.width);
+                    let h = parseInt(file.size.height);
+                    
+                    if(isNaN(w) || isNaN(h)) {
+                        alert(`File Error: ${file.name} lacks valid dimensions.`);
+                        return;
+                    }
+
+                    // Smart Rotation
+                    if(allowRot && w > h && w > rollWidth && h <= rollWidth) {
+                        let temp = w; w = h; h = temp;
+                    } else if(allowRot && h > w && h <= rollWidth && (w + gap) > (h + gap)) {
+                        let temp = w; w = h; h = temp;
+                    }
+
+                    processingPool.push({ name: file.name, w: w, h: h });
+                }
+            });
+
+            // Sort by Height Descending
+            processingPool.sort((a,b) => b.h - a.h);
+
+            let cx = 0, cy = 0, currentRowHeight = 0;
+            let combinedAssetArea = 0;
+
+            processingPool.forEach(item => {
+                const allocationW = item.w + gap;
+                const allocationH = item.h + gap;
+
+                if(cx + allocationW > rollWidth) {
+                    cy += currentRowHeight;
+                    cx = 0;
+                    currentRowHeight = 0;
+                }
+                
+                item.x = cx;
+                item.y = cy;
+                
+                if(allocationH > currentRowHeight) currentRowHeight = allocationH;
+                cx += allocationW;
+
+                combinedAssetArea += (item.w * item.h); 
+            });
+
+            const totalRequiredLength = cy + currentRowHeight;
+            const totalRollUsedArea = rollWidth * totalRequiredLength;
+            
+            // Costs & Efficiency
+            const performanceEfficiency = totalRollUsedArea > 0 ? ((combinedAssetArea / totalRollUsedArea) * 100).toFixed(1) : 0;
+            const totalSquareMeters = (totalRollUsedArea / 10000).toFixed(2);
+            const overallCostEstimation = (totalSquareMeters * PRICING_RATES[activeMaterial]).toFixed(2);
+
+            // HIGHEST QUALITY CANVAS RENDERING (1cm = 10px resolution)
+            // Example: 200cm roll -> 2000px width output.
+            const scale = 10; 
+            const canvas = document.getElementById('nestCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = rollWidth * scale;
+            canvas.height = totalRequiredLength * scale;
+            
+            // Fill White Roll Background
+            ctx.fillStyle = '#ffffff'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            processingPool.forEach(item => {
+                const rx = item.x * scale, ry = item.y * scale;
+                const rw = item.w * scale, rh = item.h * scale;
+
+                // Inner Box Area
+                ctx.fillStyle = 'rgba(212, 175, 55, 0.05)';
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 4;
+                ctx.fillRect(rx, ry, rw, rh);
+                ctx.strokeRect(rx, ry, rw, rh);
+
+                // Cross X mark for visual cutting guide (Optional Pro aesthetic)
+                ctx.beginPath();
+                ctx.moveTo(rx, ry);
+                ctx.lineTo(rx + rw, ry + rh);
+                ctx.moveTo(rx + rw, ry);
+                ctx.lineTo(rx, ry + rh);
+                ctx.strokeStyle = 'rgba(212, 175, 55, 0.1)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // High-Res Text Labels
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 36px Segoe UI'; // Scaled font for high res export
+                ctx.fillText(`${item.w} x ${item.h} cm`, rx + 25, ry + 55);
+                
+                ctx.fillStyle = '#555555';
+                ctx.font = 'bold 24px Segoe UI';
+                const optimizedName = item.name.length > 30 ? item.name.substring(0,30)+'...' : item.name;
+                ctx.fillText(optimizedName, rx + 25, ry + 100);
+            });
+
+            // Populate Stats Bar
+            document.getElementById('nestStats').innerHTML = `
+                <div>Length Required<br><span>${totalRequiredLength} cm</span></div>
+                <div>Substrate Area<br><span>${totalSquareMeters} m²</span></div>
+                <div>Efficiency<br><span class="${performanceEfficiency > 80 ? 'highlight' : ''}">${performanceEfficiency}%</span></div>
+                <div>Est. Base Cost<br><span style="color:var(--accent-gold);">${overallCostEstimation} ETB</span></div>
+            `;
+
+            document.getElementById('fullscreenWorkspace').style.display = 'flex';
+        }
+
+        // ==========================================
+        // HIGH DEFINITION EXPORT LOGIC
+        // ==========================================
+        function executeRIPExport() {
+            const format = document.getElementById('exportFormat').value;
+            const canvas = document.getElementById('nestCanvas');
+            const timestamp = new Date().toISOString().split('T')[0];
+            const exportedFileName = `AK_BANNER_RIP_${timestamp}`;
+
+            if(format === 'png' || format === 'jpg') {
+                const anchor = document.createElement('a');
+                anchor.download = `${exportedFileName}.${format}`;
+                // 1.0 quality parameter ensures maximum sharpness
+                anchor.href = canvas.toDataURL(`image/${format === 'jpg' ? 'jpeg' : 'png'}`, 1.0);
+                anchor.click();
+            } else if(format === 'pdf') {
+                const { jsPDF } = window.jspdf;
+                // PDF auto dimensions based on the canvas pixel size
+                const documentPDF = new jsPDF({
+                    orientation: canvas.width > canvas.height ? 'l' : 'p',
+                    unit: 'px',
+                    format: [canvas.width, canvas.height]
+                });
+                documentPDF.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', 0, 0, canvas.width, canvas.height);
+                documentPDF.save(`${exportedFileName}.pdf`);
+            }
+        }
+
+        function closeFullscreenEngine() {
+            document.getElementById('fullscreenWorkspace').style.display = 'none';
+        }
+
+        window.onload = fetchSystemWorkspace;
     </script>
 </body>
 </html>
